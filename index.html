@@ -1,0 +1,2519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICDL Mastery</title>
+<style>
+  :root {
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --bg-card: #1c2230;
+    --bg-card2: #21283a;
+    --border: #30363d;
+    --accent: #7c3aed;
+    --accent-light: #a855f7;
+    --accent-glow: rgba(124,58,237,0.25);
+    --accent2: #2563eb;
+    --success: #22c55e;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --text: #e2e8f0;
+    --text-muted: #94a3b8;
+    --text-dim: #64748b;
+    --radius: 10px;
+    --sidebar-w: 280px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text);
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
+  }
+
+  /* ── SIDEBAR ── */
+  #sidebar {
+    width: var(--sidebar-w);
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+  #sidebar-header {
+    padding: 22px 20px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  #sidebar-header .logo {
+    font-size: 1.4rem;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent-light), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.5px;
+  }
+  #sidebar-header .sub {
+    font-size: 0.75rem;
+    color: var(--text-dim);
+    margin-top: 3px;
+  }
+  #module-list {
+    overflow-y: auto;
+    flex: 1;
+    padding: 10px 10px;
+  }
+  .sidebar-section-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    font-weight: 700;
+    padding: 8px 14px 4px;
+  }
+  #module-list::-webkit-scrollbar { width: 5px; }
+  #module-list::-webkit-scrollbar-track { background: transparent; }
+  #module-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  .mod-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 12px 14px;
+    border: none;
+    background: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: var(--radius);
+    transition: all 0.2s;
+    text-align: left;
+    margin-bottom: 4px;
+  }
+  .mod-btn:hover { background: var(--bg-card); color: var(--text); }
+  .mod-btn.active { background: var(--accent-glow); color: var(--accent-light); border: 1px solid var(--accent); }
+  .mod-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    background: var(--bg-card2);
+  }
+  .mod-btn.active .mod-icon { background: var(--accent-glow); }
+  .mod-info { display: flex; flex-direction: column; gap: 2px; }
+  .mod-num { font-size: 0.68rem; color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+  .mod-title { font-size: 0.85rem; font-weight: 600; }
+
+  #progress-section {
+    padding: 14px 16px;
+    border-top: 1px solid var(--border);
+  }
+  .progress-label { font-size: 0.72rem; color: var(--text-dim); margin-bottom: 8px; }
+  .progress-bar-wrap {
+    background: var(--bg-card2);
+    border-radius: 99px;
+    height: 6px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-light));
+    border-radius: 99px;
+    transition: width 0.5s;
+  }
+  .progress-stats {
+    display: flex; justify-content: space-between;
+    font-size: 0.72rem; color: var(--text-dim);
+    margin-top: 6px;
+  }
+
+  /* ── MAIN ── */
+  #main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  #top-bar {
+    padding: 18px 28px 16px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-secondary);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  #top-bar h1 { font-size: 1.15rem; font-weight: 700; }
+  #top-bar .badge {
+    font-size: 0.72rem; padding: 3px 10px;
+    background: var(--accent-glow); color: var(--accent-light);
+    border: 1px solid var(--accent); border-radius: 99px;
+  }
+
+  /* ── TABS ── */
+  #tabs {
+    display: flex;
+    padding: 14px 28px 0;
+    gap: 4px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border);
+  }
+  .tab-btn {
+    padding: 8px 20px;
+    border: none;
+    background: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 0.88rem;
+    font-weight: 600;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  .tab-btn:hover { color: var(--text); }
+  .tab-btn.active { color: var(--accent-light); border-bottom-color: var(--accent-light); }
+
+  /* ── CONTENT ── */
+  #content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 28px;
+  }
+  #content::-webkit-scrollbar { width: 6px; }
+  #content::-webkit-scrollbar-track { background: transparent; }
+  #content::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+
+  /* ── REVIEW ── */
+  .review-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    margin-bottom: 18px;
+    overflow: hidden;
+  }
+  .review-section-header {
+    padding: 14px 20px;
+    background: var(--bg-card2);
+    border-bottom: 1px solid var(--border);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: space-between;
+    user-select: none;
+  }
+  .review-section-header h3 {
+    font-size: 0.95rem; font-weight: 700; color: var(--accent-light);
+  }
+  .review-section-header .chevron { transition: transform 0.2s; color: var(--text-dim); }
+  .review-section-header.open .chevron { transform: rotate(90deg); }
+  .review-section-body { padding: 18px 20px; }
+  .review-section-body.hidden { display: none; }
+  .review-section-body p { font-size: 0.9rem; line-height: 1.7; color: var(--text); margin-bottom: 12px; }
+  .review-section-body ul, .review-section-body ol { margin: 8px 0 12px 20px; }
+  .review-section-body li { font-size: 0.88rem; line-height: 1.65; color: var(--text); margin-bottom: 4px; }
+  .review-section-body strong { color: var(--accent-light); }
+  .review-section-body .definition {
+    background: var(--bg-card2);
+    border-left: 3px solid var(--accent);
+    padding: 8px 14px;
+    border-radius: 0 6px 6px 0;
+    margin: 8px 0;
+    font-size: 0.87rem;
+  }
+  .review-section-body .tip {
+    background: rgba(34,197,94,0.08);
+    border: 1px solid rgba(34,197,94,0.25);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin: 8px 0;
+    font-size: 0.87rem;
+    color: #86efac;
+  }
+  .key-term { color: var(--accent-light); font-weight: 600; }
+
+  /* ── FLASHCARDS ── */
+  .fc-controls {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+  }
+  .fc-counter { color: var(--text-muted); font-size: 0.9rem; }
+  .fc-btns { display: flex; gap: 8px; }
+  .btn {
+    padding: 8px 18px;
+    border: 1px solid var(--border);
+    background: var(--bg-card);
+    color: var(--text);
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.2s;
+  }
+  .btn:hover { background: var(--bg-card2); border-color: var(--accent); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .btn.primary:hover { background: var(--accent-light); }
+  .btn.success { background: rgba(34,197,94,0.15); border-color: var(--success); color: var(--success); }
+  .btn.danger { background: rgba(239,68,68,0.15); border-color: var(--danger); color: var(--danger); }
+
+  .fc-arena {
+    display: flex; align-items: center; justify-content: center;
+    perspective: 1000px;
+    margin-bottom: 20px;
+    min-height: 280px;
+  }
+  .fc-card {
+    width: 100%; max-width: 700px;
+    height: 260px;
+    position: relative;
+    cursor: pointer;
+    transform-style: preserve-3d;
+    transition: transform 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .fc-card.flipped { transform: rotateY(180deg); }
+  .fc-face {
+    position: absolute; inset: 0;
+    backface-visibility: hidden;
+    border-radius: 14px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    padding: 30px;
+    text-align: center;
+    border: 1px solid var(--border);
+  }
+  .fc-face.front {
+    background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-card2) 100%);
+    border-color: var(--accent);
+  }
+  .fc-face.back {
+    background: linear-gradient(135deg, #0f1f3d 0%, #1a1040 100%);
+    border-color: var(--accent-light);
+    transform: rotateY(180deg);
+  }
+  .fc-label {
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px;
+    color: var(--text-dim); margin-bottom: 12px; font-weight: 600;
+  }
+  .fc-face.front .fc-label { color: var(--accent); }
+  .fc-face.back .fc-label { color: var(--accent-light); }
+  .fc-text {
+    font-size: 1.05rem; line-height: 1.6; color: var(--text);
+    font-weight: 500;
+  }
+  .fc-face.front .fc-text { font-size: 1.15rem; font-weight: 700; }
+  .fc-hint { font-size: 0.72rem; color: var(--text-dim); margin-top: 14px; }
+  .fc-nav {
+    display: flex; align-items: center; justify-content: center;
+    gap: 14px;
+  }
+  .fc-nav .btn { min-width: 110px; }
+  .fc-progress {
+    display: flex; gap: 5px; flex-wrap: wrap;
+    justify-content: center; margin-top: 16px;
+  }
+  .fc-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--bg-card2);
+    border: 1px solid var(--border);
+    transition: all 0.2s;
+  }
+  .fc-dot.seen { background: var(--accent); border-color: var(--accent); }
+  .fc-dot.current { background: var(--accent-light); border-color: var(--accent-light); transform: scale(1.3); }
+
+  /* ── QUIZ ── */
+  .quiz-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 22px; flex-wrap: wrap; gap: 10px;
+  }
+  .quiz-meta { color: var(--text-muted); font-size: 0.88rem; }
+  .quiz-score-badge {
+    padding: 4px 14px;
+    border-radius: 99px;
+    font-size: 0.8rem; font-weight: 700;
+    background: var(--bg-card2); border: 1px solid var(--border);
+  }
+  .question-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 22px;
+    margin-bottom: 16px;
+    transition: border-color 0.2s;
+  }
+  .question-card.answered-correct { border-color: var(--success); }
+  .question-card.answered-wrong { border-color: var(--danger); }
+  .q-num { font-size: 0.72rem; color: var(--text-dim); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+  .q-text { font-size: 0.95rem; font-weight: 600; line-height: 1.5; margin-bottom: 16px; }
+  .options { display: flex; flex-direction: column; gap: 8px; }
+  .option {
+    display: flex; align-items: center; gap: 12px;
+    padding: 11px 16px;
+    background: var(--bg-card2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.88rem;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .option:hover:not(.locked) { border-color: var(--accent); background: var(--accent-glow); }
+  .option.selected:not(.correct):not(.wrong) { border-color: var(--accent); background: var(--accent-glow); }
+  .option.correct { border-color: var(--success); background: rgba(34,197,94,0.1); color: #86efac; }
+  .option.wrong { border-color: var(--danger); background: rgba(239,68,68,0.1); color: #fca5a5; }
+  .option-letter {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 0.75rem; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .option.correct .option-letter { background: var(--success); border-color: var(--success); color: #000; }
+  .option.wrong .option-letter { background: var(--danger); border-color: var(--danger); color: #fff; }
+  .explanation {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: rgba(124,58,237,0.1);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 6px 6px 0;
+    font-size: 0.83rem;
+    color: var(--text-muted);
+    display: none;
+  }
+  .explanation.show { display: block; }
+  .quiz-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-top: 26px; flex-wrap: wrap; gap: 12px;
+  }
+  .score-display {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 22px;
+    text-align: center;
+    margin-top: 20px;
+  }
+  .score-display .big-score {
+    font-size: 2.8rem; font-weight: 800;
+    background: linear-gradient(135deg, var(--accent-light), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .score-display .score-label { font-size: 0.9rem; color: var(--text-muted); margin-top: 4px; }
+  .score-breakdown {
+    display: flex; gap: 20px; justify-content: center; margin-top: 14px;
+    flex-wrap: wrap;
+  }
+  .score-item { text-align: center; }
+  .score-item .val { font-size: 1.4rem; font-weight: 700; }
+  .score-item .lbl { font-size: 0.72rem; color: var(--text-dim); }
+  .val.correct { color: var(--success); }
+  .val.wrong { color: var(--danger); }
+
+  /* ── WELCOME ── */
+  #welcome {
+    display: flex; align-items: center; justify-content: center;
+    height: 100%;
+    flex-direction: column; gap: 16px;
+    text-align: center;
+  }
+  #welcome .hero-icon { font-size: 4rem; margin-bottom: 8px; }
+  #welcome h2 { font-size: 1.8rem; font-weight: 800; }
+  #welcome p { color: var(--text-muted); max-width: 440px; line-height: 1.6; }
+  .module-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 10px; max-width: 600px; margin-top: 10px;
+  }
+  .mod-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 10px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: center;
+  }
+  .mod-card:hover { border-color: var(--accent); background: var(--accent-glow); }
+  .mod-card .icon { font-size: 1.6rem; margin-bottom: 6px; }
+  .mod-card .name { font-size: 0.75rem; font-weight: 600; color: var(--text-muted); }
+
+  /* ── RECALL ── */
+  .recall-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+  }
+  .recall-meta { color: var(--text-muted); font-size: 0.88rem; }
+  .recall-progress-wrap {
+    background: var(--bg-card2); border-radius: 99px; height: 7px;
+    overflow: hidden; margin-bottom: 22px;
+  }
+  .recall-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-light));
+    border-radius: 99px; transition: width 0.4s ease;
+  }
+  .recall-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 32px 28px;
+    min-height: 200px;
+    display: flex; flex-direction: column; justify-content: space-between;
+    gap: 20px; margin-bottom: 20px;
+    transition: border-color 0.3s;
+  }
+  .recall-card.revealed-correct { border-color: var(--success); }
+  .recall-card.revealed-wrong   { border-color: var(--danger);  }
+  .recall-q-label {
+    font-size: 0.7rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--accent); margin-bottom: 10px;
+  }
+  .recall-question {
+    font-size: 1.15rem; font-weight: 700; line-height: 1.55; color: var(--text);
+  }
+  .recall-answer-box {
+    margin-top: 10px;
+    background: var(--bg-card2);
+    border-left: 3px solid var(--accent-light);
+    border-radius: 0 8px 8px 0;
+    padding: 14px 16px;
+    font-size: 0.9rem; line-height: 1.7; color: var(--text);
+    display: none;
+    animation: fadeSlide 0.3s ease;
+  }
+  .recall-answer-box.show { display: block; }
+  .recall-answer-box .answer-label {
+    font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 1px; color: var(--accent-light); margin-bottom: 6px;
+  }
+  .recall-explain {
+    margin-top: 10px;
+    font-size: 0.83rem; color: var(--text-muted);
+    border-top: 1px solid var(--border); padding-top: 10px;
+  }
+  @keyframes fadeSlide {
+    from { opacity: 0; transform: translateY(-8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .recall-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+  .recall-actions .btn { flex: 1; min-width: 120px; text-align: center; justify-content: center; }
+  .btn.got-it   { background: rgba(34,197,94,0.15); border-color: var(--success); color: var(--success); }
+  .btn.got-it:hover   { background: rgba(34,197,94,0.28); }
+  .btn.missed-it { background: rgba(239,68,68,0.12); border-color: var(--danger); color: var(--danger); }
+  .btn.missed-it:hover { background: rgba(239,68,68,0.25); }
+  .recall-streak {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.82rem; color: var(--text-muted);
+  }
+  .recall-streak .streak-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--bg-card2); border: 1px solid var(--border);
+    transition: background 0.2s;
+  }
+  .recall-streak .streak-dot.got  { background: var(--success); border-color: var(--success); }
+  .recall-streak .streak-dot.miss { background: var(--danger);  border-color: var(--danger);  }
+  .recall-summary {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px; text-align: center;
+    display: none; animation: fadeSlide 0.4s ease;
+  }
+  .recall-summary.show { display: block; }
+  .recall-summary .big-score {
+    font-size: 3rem; font-weight: 800;
+    background: linear-gradient(135deg, var(--accent-light), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .recall-summary .score-label { font-size: 0.95rem; color: var(--text-muted); margin: 6px 0 20px; }
+  .missed-list { text-align: left; margin-top: 20px; }
+  .missed-list h4 { font-size: 0.85rem; font-weight: 700; color: var(--danger); margin-bottom: 10px; }
+  .missed-item {
+    background: rgba(239,68,68,0.06); border: 1px solid rgba(239,68,68,0.2);
+    border-radius: 8px; padding: 10px 14px;
+    margin-bottom: 8px; font-size: 0.84rem; color: var(--text);
+  }
+  .missed-item strong { color: var(--danger); display: block; margin-bottom: 4px; }
+
+  /* ── ABOUT ── */
+  .about-hero {
+    background: linear-gradient(135deg, #1a0e3a 0%, #0f1f3d 100%);
+    border: 1px solid var(--accent);
+    border-radius: 14px;
+    padding: 32px 28px;
+    margin-bottom: 24px;
+    display: flex; gap: 24px; align-items: flex-start;
+    flex-wrap: wrap;
+  }
+  .about-hero-icon { font-size: 3.5rem; flex-shrink: 0; }
+  .about-hero-text h2 {
+    font-size: 1.6rem; font-weight: 800;
+    background: linear-gradient(135deg, var(--accent-light), var(--accent2));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text; margin-bottom: 8px;
+  }
+  .about-hero-text p { font-size: 0.92rem; line-height: 1.7; color: var(--text-muted); max-width: 600px; }
+  .about-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px; margin-bottom: 24px;
+  }
+  .about-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    transition: border-color 0.2s;
+  }
+  .about-card:hover { border-color: var(--accent); }
+  .about-card-header {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
+  }
+  .about-card-icon {
+    width: 38px; height: 38px;
+    border-radius: 9px;
+    background: var(--accent-glow);
+    border: 1px solid var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.1rem; flex-shrink: 0;
+  }
+  .about-card h3 { font-size: 0.95rem; font-weight: 700; color: var(--accent-light); }
+  .about-card p { font-size: 0.86rem; line-height: 1.7; color: var(--text-muted); margin-bottom: 10px; }
+  .about-card ul { margin: 6px 0 0 16px; }
+  .about-card li { font-size: 0.84rem; line-height: 1.65; color: var(--text); margin-bottom: 4px; }
+  .about-card strong { color: var(--accent-light); }
+  .about-modules-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px; margin-top: 10px;
+  }
+  .about-module-chip {
+    background: var(--bg-card2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 0.82rem; font-weight: 600; color: var(--text);
+  }
+  .about-module-chip .chip-num {
+    background: var(--accent-glow);
+    border: 1px solid var(--accent);
+    color: var(--accent-light);
+    border-radius: 5px;
+    padding: 1px 7px;
+    font-size: 0.72rem; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .info-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(34,197,94,0.1); border: 1px solid rgba(34,197,94,0.3);
+    color: #86efac; border-radius: 99px;
+    padding: 3px 12px; font-size: 0.78rem; font-weight: 600;
+    margin-bottom: 18px;
+  }
+
+  /* Responsive */
+  @media(max-width:700px){
+    #sidebar { width: 220px; }
+    .mod-title { font-size: 0.78rem; }
+    #content { padding: 16px; }
+  }
+  @media(max-width:550px){
+    body { flex-direction: column; }
+    #sidebar { width: 100%; height: auto; max-height: 200px; }
+    #main { flex: 1; }
+  }
+</style>
+</head>
+<body>
+
+<nav id="sidebar">
+  <div id="sidebar-header">
+    <div class="logo">ICDL Mastery</div>
+    <div class="sub">International Computer Driving Licence</div>
+  </div>
+  <div id="module-list">
+    <div class="sidebar-section-label">Info</div>
+    <button class="mod-btn" data-idx="about" onclick="showAbout()">
+      <div class="mod-icon">ℹ️</div>
+      <div class="mod-info"><span class="mod-num">Overview</span><span class="mod-title">What is ICDL?</span></div>
+    </button>
+    <div class="sidebar-section-label">Modules</div>
+    <button class="mod-btn" data-idx="0" onclick="loadModule(0)">
+      <div class="mod-icon">💡</div>
+      <div class="mod-info"><span class="mod-num">Module 1</span><span class="mod-title">Computer Essentials</span></div>
+    </button>
+    <button class="mod-btn" data-idx="1" onclick="loadModule(1)">
+      <div class="mod-icon">🌐</div>
+      <div class="mod-info"><span class="mod-num">Module 2</span><span class="mod-title">Online Essentials</span></div>
+    </button>
+    <button class="mod-btn" data-idx="2" onclick="loadModule(2)">
+      <div class="mod-icon">✍️</div>
+      <div class="mod-info"><span class="mod-num">Module 3</span><span class="mod-title">Word Processing</span></div>
+    </button>
+    <button class="mod-btn" data-idx="3" onclick="loadModule(3)">
+      <div class="mod-icon">📊</div>
+      <div class="mod-info"><span class="mod-num">Module 4</span><span class="mod-title">Spreadsheets</span></div>
+    </button>
+    <button class="mod-btn" data-idx="7" onclick="loadModule(7)">
+      <div class="mod-icon">🔐</div>
+      <div class="mod-info"><span class="mod-num">Module 5</span><span class="mod-title">IT Security</span></div>
+    </button>
+    <button class="mod-btn" data-idx="5" onclick="loadModule(5)">
+      <div class="mod-icon">📽️</div>
+      <div class="mod-info"><span class="mod-num">Module 6</span><span class="mod-title">Presentation</span></div>
+    </button>
+    <button class="mod-btn" data-idx="6" onclick="loadModule(6)">
+      <div class="mod-icon">🤝</div>
+      <div class="mod-info"><span class="mod-num">Module 7</span><span class="mod-title">Online Collaboration</span></div>
+    </button>
+  </div>
+  <div id="progress-section">
+    <div class="progress-label">Overall Progress</div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="overall-bar" style="width:0%"></div></div>
+    <div class="progress-stats">
+      <span id="progress-text">0 / 7 modules studied</span>
+      <span id="progress-pct">0%</span>
+    </div>
+  </div>
+</nav>
+
+<div id="main">
+  <div id="top-bar">
+    <h1 id="mod-title">Welcome</h1>
+    <span class="badge" id="mod-badge">ICDL v4</span>
+  </div>
+  <div id="tabs" style="display:none">
+    <button class="tab-btn active" onclick="showTab('review')">📖 Review</button>
+    <button class="tab-btn" onclick="showTab('flashcards')">🃏 Flashcards</button>
+    <button class="tab-btn" onclick="showTab('recall')">🧠 Recall</button>
+    <button class="tab-btn" onclick="showTab('quiz')">✅ Practice Test</button>
+  </div>
+  <div id="content">
+    <div id="welcome">
+      <div class="hero-icon">🎓</div>
+      <h2>ICDL Mastery</h2>
+      <p>Select a module from the sidebar to start reviewing. Each module includes a summary, interactive flashcards, and a practice test.</p>
+      <div class="module-grid">
+        <div class="mod-card" onclick="loadModule(0)"><div class="icon">💡</div><div class="name">Computer Essentials</div></div>
+        <div class="mod-card" onclick="loadModule(1)"><div class="icon">🌐</div><div class="name">Online Essentials</div></div>
+        <div class="mod-card" onclick="loadModule(2)"><div class="icon">✍️</div><div class="name">Word Processing</div></div>
+        <div class="mod-card" onclick="loadModule(3)"><div class="icon">📊</div><div class="name">Spreadsheets</div></div>
+        <div class="mod-card" onclick="loadModule(7)"><div class="icon">🔐</div><div class="name">IT Security</div></div>
+        <div class="mod-card" onclick="loadModule(5)"><div class="icon">📽️</div><div class="name">Presentation</div></div>
+        <div class="mod-card" onclick="loadModule(6)"><div class="icon">🤝</div><div class="name">Online Collaboration</div></div>
+      </div>
+    </div>
+    <div id="about-pane" style="display:none">
+      <div class="about-hero">
+        <div class="about-hero-icon">🎓</div>
+        <div class="about-hero-text">
+          <h2>What is ICDL?</h2>
+          <p>ICDL (International Computer Driving Licence) is the world's leading computer skills certification programme. It validates your digital competency across 7 modules — from computer basics to cybersecurity and online collaboration — and is recognised by employers and universities worldwide.</p>
+        </div>
+      </div>
+
+      <div class="info-badge">📍 Based on Bocconi University ICDL exam guidelines</div>
+
+      <div class="about-grid">
+
+        <div class="about-card">
+          <div class="about-card-header">
+            <div class="about-card-icon">📋</div>
+            <h3>The 7 ICDL Modules</h3>
+          </div>
+          <p>Candidates must pass all 7 modules to earn the full ICDL certification. Completing ICDL fulfils a mandatory prerequisite for several Bocconi courses including Computer Science (30424), Legal Tech (30625), and Computer Skills for Economics (30068/6033).</p>
+          <div class="about-modules-grid">
+            <div class="about-module-chip"><span class="chip-num">M1</span>Computer Essentials</div>
+            <div class="about-module-chip"><span class="chip-num">M2</span>Online Essentials</div>
+            <div class="about-module-chip"><span class="chip-num">M3</span>Word Processing</div>
+            <div class="about-module-chip"><span class="chip-num">M4</span>Spreadsheets</div>
+            <div class="about-module-chip"><span class="chip-num">M5</span>IT Security</div>
+            <div class="about-module-chip"><span class="chip-num">M6</span>Presentation</div>
+            <div class="about-module-chip"><span class="chip-num">M7</span>Online Collaboration</div>
+          </div>
+        </div>
+
+        <div class="about-card">
+          <div class="about-card-header">
+            <div class="about-card-icon">🛒</div>
+            <h3>Purchase a Skills Card & Exams</h3>
+          </div>
+          <p>All purchases are made exclusively through the <strong>online payment form</strong> in your <strong>yoU@B Diary</strong>. Bocconi students benefit from discounted pricing:</p>
+          <ul>
+            <li><strong>ICDL Skills Card:</strong> €60 (records all passed exams, no expiry)</li>
+            <li><strong>Individual exam module:</strong> €18 each</li>
+          </ul>
+          <p style="margin-top:10px">The virtual Skills Card is sent to your <strong>Bocconi email within 2 working days</strong> after payment is processed.</p>
+        </div>
+
+        <div class="about-card">
+          <div class="about-card-header">
+            <div class="about-card-icon">📝</div>
+            <h3>Exam Registration Procedure</h3>
+          </div>
+          <p>After purchasing, register through your <strong>yoU@B Diary</strong> → IT Certifications → "Registration for ICDL exams at BOCCONI". Key rules:</p>
+          <ul>
+            <li>Enter your <strong>7-digit Skills Card number</strong> on first access</li>
+            <li>Maximum <strong>3 exams per session</strong></li>
+            <li>Choose from available dates within the <strong>next 4 weeks</strong></li>
+            <li>Modifications/cancellations allowed until <strong>23:59 on Thursday</strong> before exam week</li>
+            <li>Confirmation with time & location arrives the <strong>Friday before</strong> your exam</li>
+          </ul>
+        </div>
+
+        <div class="about-card">
+          <div class="about-card-header">
+            <div class="about-card-icon">📊</div>
+            <h3>Check Exam Results</h3>
+          </div>
+          <p>Results are available through the <strong>private area on the AICA website</strong> at <strong>www.aicanet.it</strong>. Steps:</p>
+          <ul>
+            <li>Register as a candidate on the AICA website</li>
+            <li>Select <strong>ICDL</strong> from the certification menu</li>
+            <li>Enter your Skills Card number <strong>(without the "IT-" prefix)</strong></li>
+          </ul>
+          <p style="margin-top:10px">For access issues, use the online contact form on the AICA website for technical support.</p>
+        </div>
+
+        <div class="about-card">
+          <div class="about-card-header">
+            <div class="about-card-icon">🏆</div>
+            <h3>Receive Your ICDL Certificate</h3>
+          </div>
+          <p>Once you have successfully passed <strong>all 7 modules</strong>, the IT Education Center will email your <strong>ICDL certificate in PDF format</strong> to your Bocconi email address.</p>
+          <ul>
+            <li>Certificate arrives <strong>approximately 1 month</strong> after completing all modules</li>
+            <li><strong>No printing required</strong> for curricular exam registration</li>
+            <li>The PDF certificate is the official valid document</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+    <div id="review-pane" class="tab-pane"></div>
+    <div id="flashcards-pane" class="tab-pane"></div>
+    <div id="recall-pane" class="tab-pane"></div>
+    <div id="quiz-pane" class="tab-pane"></div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════════════════
+//  MODULE DATA
+// ══════════════════════════════════════════════════════════════
+const MODULES = [
+  // ── MODULE 1 ──────────────────────────────────────────────
+  {
+    id: 0,
+    title: "Computer Essentials",
+    badge: "Module 1",
+    review: [
+      {
+        title: "1.1 General Concepts",
+        body: `
+          <p><strong>Hardware</strong> refers to the physical components of a computer — the parts you can see, feel, and touch. Examples include the CPU, keyboard, monitor, memory chips, cables, mouse, printer, and power supply.</p>
+          <p><strong>Software</strong> refers to the programs (sets of instructions) that control the computer. Without software, hardware is useless. The correct spelling is <em>program</em>, not <em>programme</em>.</p>
+          <p><strong>Information Technology (IT)</strong> is the use of computers and related technologies to handle information — storing, retrieving, and communicating data.</p>
+          <p><strong>Types of Computers:</strong></p>
+          <ul>
+            <li><strong>Mainframe</strong> — Very large, expensive, high capacity, used by big organizations for processing millions of transactions (banks, airlines).</li>
+            <li><strong>Network Computer</strong> — A thin client that relies on a server for processing and storage. Low cost, limited local storage.</li>
+            <li><strong>Personal Computer (PC)</strong> — Desktop computer for individual use. Moderate cost and capacity.</li>
+            <li><strong>Laptop</strong> — Portable personal computer with built-in screen and battery. Similar capability to a desktop but portable.</li>
+            <li><strong>PDA (Personal Digital Assistant)</strong> — Handheld device, very small, used for contacts, calendars, basic tasks.</li>
+          </ul>
+        `
+      },
+      {
+        title: "1.2 Hardware Components",
+        body: `
+          <p><strong>Central Processing Unit (CPU)</strong> — The "brain" of the computer. It performs calculations, logic operations, and controls other components. Speed is measured in <em>MHz (megahertz)</em> or <em>GHz (gigahertz)</em>.</p>
+          <p><strong>Memory Types:</strong></p>
+          <ul>
+            <li><strong>RAM (Random Access Memory)</strong> — Volatile (loses data when power off), fast, used for running programs. More RAM = better multitasking.</li>
+            <li><strong>ROM (Read-Only Memory)</strong> — Non-volatile (permanent), contains startup instructions (BIOS). Cannot normally be written to.</li>
+          </ul>
+          <p><strong>Memory Sizes:</strong> bit → byte (8 bits) → KB (1024 bytes) → MB (1024 KB) → GB (1024 MB) → TB (1024 GB)</p>
+          <p><strong>Input Devices</strong> — Devices that send data INTO the computer: keyboard, mouse, trackball, scanner, touchpad, light pen, joystick, digital camera, microphone.</p>
+          <p><strong>Output Devices</strong> — Devices that receive data FROM the computer: monitor/screen, printer, plotter, speakers.</p>
+          <p><strong>Input/Output Devices</strong> — Devices that do both: touchscreen, modem, network card.</p>
+          <p><strong>Storage Devices:</strong></p>
+          <ul>
+            <li>Diskette (floppy): ~1.44 MB — slow, cheap, fragile</li>
+            <li>Zip disk: ~100–250 MB</li>
+            <li>CD-ROM: ~700 MB — read-only, optical</li>
+            <li>DVD: ~4.7 GB — optical</li>
+            <li>Hard disk: many GB/TB — fast, internal or external</li>
+            <li>USB Flash drive: portable solid-state storage</li>
+          </ul>
+        `
+      },
+      {
+        title: "1.3 Software",
+        body: `
+          <p><strong>Operating System (OS)</strong> — Software that manages the hardware and provides a platform for other programs. It controls memory, processes, files, and devices. Examples: Linux, Windows, macOS.</p>
+          <p><strong>Application Software</strong> — Programs that perform specific tasks for the user:</p>
+          <ul>
+            <li>Word processor (Writer, Word) — create documents</li>
+            <li>Spreadsheet (Calc, Excel) — numerical data analysis</li>
+            <li>Database (Base, Access) — store and retrieve structured data</li>
+            <li>Web browser (Firefox, Chrome) — browse the Internet</li>
+            <li>Desktop Publishing — page layout and design</li>
+            <li>Accounting software — financial management</li>
+          </ul>
+          <p><strong>GUI (Graphical User Interface)</strong> — An interface that uses windows, icons, menus, and a pointer (mouse), making computers easier to use than text-based command lines.</p>
+          <p><strong>Software Versions</strong> — Newer versions fix bugs and add features. Software is updated to remain compatible and secure.</p>
+          <p><strong>Systems Development</strong> — Computer-based systems are typically developed through: Analysis → Design → Programming → Testing → Implementation → Maintenance.</p>
+        `
+      },
+      {
+        title: "1.4 Information Networks",
+        body: `
+          <p><strong>LAN (Local Area Network)</strong> — Network covering a small area (office, building). Computers connected by cables or Wi-Fi. Advantages: sharing printers, files, internet access.</p>
+          <p><strong>WAN (Wide Area Network)</strong> — Network covering a large geographic area (cities, countries). The Internet is the world's largest WAN.</p>
+          <p><strong>Client/Server</strong> — Network model where client computers request services from a central server.</p>
+          <p><strong>Intranet</strong> — A private network within an organization, using Internet technology but restricted to internal users.</p>
+          <p><strong>Extranet</strong> — An intranet extended to authorized external users (partners, suppliers).</p>
+          <p><strong>Internet</strong> — The global network of interconnected computers communicating via TCP/IP protocol. Used for email, web browsing, file transfer, online banking, etc.</p>
+          <p><strong>WWW (World Wide Web)</strong> — A collection of web pages stored on servers, accessed via browsers. The WWW is <em>part of</em> the Internet (not the whole Internet).</p>
+          <p><strong>Connection Terms:</strong></p>
+          <ul>
+            <li><strong>PSTN</strong> — Public Switched Telephone Network (analogue phone lines)</li>
+            <li><strong>ISDN</strong> — Integrated Services Digital Network (digital phone lines)</li>
+            <li><strong>ADSL</strong> — Asymmetric Digital Subscriber Line (broadband over phone line)</li>
+            <li><strong>Modem</strong> — Device that converts digital signals to analogue (and back)</li>
+            <li><strong>Transfer rate</strong> — Speed of data transfer, measured in bps (bits per second)</li>
+          </ul>
+        `
+      },
+      {
+        title: "1.5–1.6 IT in Everyday Life & Health",
+        body: `
+          <p><strong>IT Applications:</strong></p>
+          <ul>
+            <li><strong>Business</strong>: admin systems, airline booking, insurance claims, online banking</li>
+            <li><strong>Government</strong>: census records, vehicle registration, tax collection, e-voting</li>
+            <li><strong>Healthcare</strong>: patient records, ambulance control, diagnostic tools, surgical equipment</li>
+            <li><strong>Education</strong>: student registration, computer-based training (CBT), distance learning</li>
+          </ul>
+          <p><strong>Teleworking</strong> — Working from home via computer/internet. Advantages: no commute, flexible hours. Disadvantages: isolation, less teamwork.</p>
+          <p><strong>E-Commerce</strong> — Buying and selling goods/services online. Requires secure payment and personal data handling.</p>
+          <p><strong>Ergonomics &amp; Health:</strong></p>
+          <ul>
+            <li>Monitor: arms-length away, top at eye level, avoid glare</li>
+            <li>Chair: adjustable, supporting lower back</li>
+            <li>Keyboard: wrists flat, elbows at 90°</li>
+            <li>Take regular breaks (every 30–60 minutes)</li>
+            <li>RSI (Repetitive Strain Injury) — from repetitive mouse/keyboard use</li>
+          </ul>
+        `
+      },
+      {
+        title: "1.7–1.8 Security, Copyright & Data Protection",
+        body: `
+          <p><strong>Malware (Malicious Software)</strong> — Software designed to damage, steal data, or gain unauthorised access.</p>
+          <ul>
+            <li><strong>Virus</strong> — Copies itself into programs/files; runs every time the infected file is opened; spreads to other devices via storage or email</li>
+            <li><strong>Worm</strong> — Self-replicating program that spreads automatically over the internet without needing a host file</li>
+            <li><strong>Trojan Horse</strong> — Appears legitimate but contains hidden malicious code; does not self-replicate</li>
+            <li><strong>Spyware</strong> — Secretly records and transmits user activity and personal data</li>
+            <li><strong>Adware</strong> — Displays unwanted advertisements; often bundled with free software</li>
+            <li><strong>Ransomware</strong> — Locks or encrypts your files and demands a ransom payment to restore access</li>
+            <li><strong>Keylogger</strong> — Records every keystroke and sends it to an attacker (captures passwords)</li>
+            <li><strong>Rootkit</strong> — Takes control of the OS, hiding its presence and giving attackers admin access</li>
+          </ul>
+          <p><strong>Protection against malware:</strong> Keep antivirus updated, don't open unknown attachments, download only from trusted sources, apply OS updates.</p>
+          <p><strong>Signs of infection:</strong> browser homepage changed, unexpected pop-ups, programs auto-starting, emails sent to contacts automatically.</p>
+          <p><strong>Data Security Measures:</strong> passwords, regular backups, physical security, encryption, firewalls.</p>
+          <p><strong>Copyright</strong> — Legal protection for software and digital content. You cannot copy or distribute software without permission.</p>
+          <ul>
+            <li><strong>Proprietary</strong> — User buys a licence; source code is closed</li>
+            <li><strong>Shareware</strong> — Try before you buy; limited free version</li>
+            <li><strong>Freeware</strong> — Free to use but copyright retained by author</li>
+            <li><strong>Open Source</strong> — Source code is freely available; can be modified and redistributed</li>
+            <li><strong>EULA</strong> — End User Licence Agreement: legal contract between publisher and user</li>
+          </ul>
+          <p><strong>Data Protection Legislation</strong> — Laws controlling how personal data is collected, stored, and used. Key GDPR principles: Transparency (users must be informed), Legitimacy (data used only for stated purpose), Proportionality (security measures must match real risk).</p>
+        `
+      },
+      {
+        title: "CPU Internal Components (Handout Extra)",
+        body: `
+          <p>The CPU is made up of several internal components:</p>
+          <ul>
+            <li><strong>ALU (Arithmetic and Logic Unit)</strong> — performs all mathematical and logical operations</li>
+            <li><strong>CU (Control Unit)</strong> — coordinates and controls all processes inside the CPU</li>
+            <li><strong>Cache Memory</strong> — ultra-fast temporary memory inside the CPU where the ALU saves frequently used data</li>
+            <li><strong>Processor Registers</strong> — tiny storage locations inside the CPU that hold addresses, instructions, and values being processed</li>
+            <li><strong>Bus</strong> — communication pathway that transfers data between internal and external components</li>
+          </ul>
+          <p><strong>Clock Speed</strong> — An internal clock emits regular signals. The frequency (in Hz/GHz) equals the number of operations per second. Modern CPUs run at up to 3–5 GHz (3–5 billion cycles/second).</p>
+          <p><strong>Network Classification (Extended):</strong></p>
+          <ul>
+            <li><strong>PAN / WPAN</strong> — Personal Area Network; very short range (Bluetooth, ~10m)</li>
+            <li><strong>LAN</strong> — Local Area Network; office/building</li>
+            <li><strong>MAN</strong> — Metropolitan Area Network; city-scale</li>
+            <li><strong>WAN</strong> — Wide Area Network; country/global (the Internet)</li>
+            <li><strong>Client-Server</strong> — powerful server provides resources to client devices</li>
+            <li><strong>Peer-to-Peer (P2P)</strong> — each device can act as both server and client</li>
+          </ul>
+          <p><strong>Storage types:</strong> HDD (Hard Disk Drive) — has mechanical parts, slower. SSD (Solid State Drive) — flash memory chip, no moving parts, much faster, retains data without power.</p>
+        `
+      }
+    ],
+    flashcards: [
+      {f:"What is hardware?", b:"The physical components of a computer that you can see and touch (CPU, keyboard, monitor, mouse, etc.)"},
+      {f:"What is software?", b:"Programs (sets of instructions) that control the computer and make it function."},
+      {f:"What does IT stand for and mean?", b:"Information Technology — the use of computers and related technologies to store, retrieve, and communicate information."},
+      {f:"What is a mainframe computer?", b:"A very large, expensive, high-capacity computer used by large organizations to process millions of transactions simultaneously."},
+      {f:"What is RAM and is it volatile?", b:"Random Access Memory — fast, temporary storage used when running programs. It IS volatile (data is lost when power is off)."},
+      {f:"What is ROM?", b:"Read-Only Memory — non-volatile permanent memory that contains startup instructions (BIOS). Cannot normally be written to."},
+      {f:"How is CPU speed measured?", b:"In MHz (megahertz) or GHz (gigahertz)."},
+      {f:"Name 4 input devices.", b:"Keyboard, mouse, scanner, digital camera, microphone, joystick, trackball, touchpad, light pen."},
+      {f:"Name 4 output devices.", b:"Monitor/screen, printer, plotter, speakers."},
+      {f:"What is a touchscreen classified as?", b:"An input/output device — it both displays information (output) and accepts touch input."},
+      {f:"What is a LAN?", b:"Local Area Network — a network covering a small area like an office or building."},
+      {f:"What is a WAN?", b:"Wide Area Network — a network covering a large geographic area such as a country or continent."},
+      {f:"What is the difference between the Internet and the WWW?", b:"The Internet is the global network of computers. The WWW (World Wide Web) is a collection of web pages that runs ON the Internet — the WWW is part of the Internet."},
+      {f:"What does ADSL stand for?", b:"Asymmetric Digital Subscriber Line — a type of broadband internet connection over phone lines."},
+      {f:"What is teleworking?", b:"Working from home using computers and internet instead of commuting to an office."},
+      {f:"What is a computer virus?", b:"A malicious program that copies itself and can damage files or the operating system. It can enter via email attachments, downloads, or removable media."},
+      {f:"What is shareware?", b:"Software you can try for free (usually with limited features or time), after which you pay to continue using it."},
+      {f:"What is freeware?", b:"Software that is free to use but the copyright is still retained by the author."},
+      {f:"What is a GUI?", b:"Graphical User Interface — an interface using windows, icons, menus, and a pointer to make computers easier to use."},
+      {f:"What does EULA stand for?", b:"End User Licence Agreement — the legal contract between the software publisher and the user governing how the software may be used."},
+    ],
+    quiz: [
+      {q:"Which type of computer is typically used by large banks to process millions of transactions?", o:["Laptop","PDA","Mainframe","Network Computer"], c:2, e:"Mainframe computers are large, expensive, and handle massive workloads for large organizations like banks and airlines."},
+      {q:"What does RAM stand for?", o:["Read Access Memory","Random Access Memory","Rapid Arithmetic Memory","Read-All Memory"], c:1, e:"RAM = Random Access Memory. It is the fast, volatile working memory used by the CPU to run programs."},
+      {q:"Which of the following is an INPUT device?", o:["Monitor","Plotter","Speakers","Scanner"], c:3, e:"A scanner sends data INTO the computer. Monitors, plotters, and speakers are output devices."},
+      {q:"CPU speed is measured in:", o:["Bytes per second","Megapixels","MHz or GHz","Megabytes"], c:2, e:"CPU speed (clock speed) is measured in MHz (megahertz) or GHz (gigahertz)."},
+      {q:"What is the difference between the Internet and the World Wide Web?", o:["They are exactly the same thing","The Internet is part of the WWW","The WWW is a collection of web pages that runs on the Internet","The WWW includes all email and FTP too"], c:2, e:"The Internet is the global network infrastructure. The WWW is just one service that runs on it — a collection of web pages accessed via browsers."},
+      {q:"ROM is best described as:", o:["Volatile memory used for running programs","Permanent memory containing startup instructions","A type of hard disk","External storage media"], c:1, e:"ROM (Read-Only Memory) is non-volatile — it retains data without power — and stores the computer's startup (BIOS) instructions."},
+      {q:"A touchscreen is classified as:", o:["An input device only","An output device only","An input/output device","A storage device"], c:2, e:"A touchscreen is both — it displays (output) and receives touch (input), making it an input/output device."},
+      {q:"Which software licence allows you to try software for free before buying?", o:["Freeware","Public domain","Shareware","Open source"], c:2, e:"Shareware = try before you buy. Freeware is permanently free to use. Both are different from commercial software requiring upfront payment."},
+      {q:"What is a LAN?", o:["A wide area network spanning countries","A local area network covering a building or campus","A wireless network only","A network connecting mainframes"], c:1, e:"LAN = Local Area Network. It covers a limited geographic area like an office, building, or school campus."},
+      {q:"Which condition can result from repetitive keyboard and mouse use?", o:["Carpal syndrome","RSI (Repetitive Strain Injury)","Eye strain only","Posture disorder"], c:1, e:"RSI (Repetitive Strain Injury) is a common health issue from prolonged repetitive computer use, affecting hands, wrists, and arms."},
+      {q:"Data protection legislation exists to:", o:["Prevent all data storage","Protect organizations from lawsuits","Control how personal data is collected, stored, and used","Make data available to the public"], c:2, e:"Data protection laws give individuals rights over their personal data and impose obligations on organizations that collect and process it."},
+      {q:"What is ADSL?", o:["A type of virus","Asymmetric Digital Subscriber Line — broadband over phone lines","A database language","A networking protocol"], c:1, e:"ADSL (Asymmetric Digital Subscriber Line) delivers broadband internet over standard telephone lines. 'Asymmetric' means download speed is faster than upload."},
+    ]
+  },
+
+  // ── MODULE 2 ──────────────────────────────────────────────
+  {
+    id: 1,
+    title: "Online Essentials",
+    badge: "Module 2",
+    review: [
+      {
+        title: "2.1 Starting & Shutting Down",
+        body: `
+          <p><strong>Starting the computer:</strong> Press the power button. The BIOS (stored in ROM) runs the startup routine, loads the OS from the hard disk into RAM. You may need to log in with a username and password.</p>
+          <p><strong>Shutting down Ubuntu (Gnome):</strong> System → Log Out → Shut Down. Never switch off the power directly — this can corrupt files.</p>
+          <p><strong>Restarting:</strong> System → Log Out → Restart. Use this after installing software or when the system is slow.</p>
+          <p><strong>Shutting down a non-responding application:</strong> Right-click the taskbar → Launch "System Monitor" or use the Force Quit function. Under Linux, you can also use <code>xkill</code>.</p>
+          <p><strong>Viewing system information:</strong> System → Administration → System Monitor shows OS version, RAM, CPU info.</p>
+        `
+      },
+      {
+        title: "2.1.2 Desktop Configuration",
+        body: `
+          <p>The <strong>Gnome Desktop</strong> in Ubuntu Linux has a top panel (menu bar) and bottom panel (taskbar). The desktop shows icons for files, folders, and shortcuts.</p>
+          <p><strong>Changing date/time:</strong> Right-click the clock on the panel → Adjust Date &amp; Time.</p>
+          <p><strong>Volume settings:</strong> Click the speaker icon on the panel to adjust volume.</p>
+          <p><strong>Display settings:</strong> System → Preferences → Screen Resolution — change pixel resolution (e.g., 1024×768), colour depth, and screen saver.</p>
+          <p><strong>Keyboard language:</strong> System → Preferences → Keyboard — add/change keyboard layout (e.g., from US English to French).</p>
+          <p><strong>Formatting removable media:</strong> Right-click the disk icon → Format. WARNING: formatting erases all data on the disk.</p>
+          <p><strong>Installing/uninstalling software:</strong> Applications → Add/Remove or System → Administration → Synaptic Package Manager.</p>
+        `
+      },
+      {
+        title: "2.2 Desktop Environment",
+        body: `
+          <p><strong>Working with windows:</strong></p>
+          <ul>
+            <li>Minimise — hides the window to the taskbar</li>
+            <li>Maximise — expands the window to fill the screen</li>
+            <li>Restore — returns a maximised window to its previous size</li>
+            <li>Close — closes the window/application</li>
+            <li>Move — drag the title bar</li>
+            <li>Resize — drag the edge or corner</li>
+          </ul>
+          <p><strong>Desktop icons</strong> — Shortcuts to applications, files, or folders. Double-click to open.</p>
+          <p><strong>Switching between windows:</strong> Click the window in the taskbar, or use Alt+Tab.</p>
+          <p><strong>Right-click context menu</strong> — Provides options relevant to the clicked item (open, copy, paste, rename, delete, properties).</p>
+          <p><strong>Screenshot:</strong> Press Print Screen to capture the full screen. Alt+Print Screen captures only the active window.</p>
+        `
+      },
+      {
+        title: "2.3 File Management",
+        body: `
+          <p><strong>File Manager (Nautilus)</strong> in Ubuntu lets you navigate, open, copy, move, and delete files and folders.</p>
+          <p><strong>Directory/Folder structure:</strong> Files are organised in a tree hierarchy. In Linux, the root is <code>/</code>. Your home folder is <code>/home/username</code>.</p>
+          <p><strong>File operations:</strong></p>
+          <ul>
+            <li><strong>Create folder</strong> — File → Create Folder, or right-click → Create Folder</li>
+            <li><strong>Rename</strong> — Right-click → Rename, or press F2</li>
+            <li><strong>Copy</strong> — Right-click → Copy, then navigate and Paste (Ctrl+C, Ctrl+V)</li>
+            <li><strong>Move</strong> — Right-click → Cut, then Paste (Ctrl+X, Ctrl+V)</li>
+            <li><strong>Delete</strong> — Press Delete key or right-click → Move to Trash</li>
+            <li><strong>Restore from Trash</strong> — Open Trash → right-click → Restore</li>
+          </ul>
+          <p><strong>Searching for files:</strong> Places → Search for Files, or use the Find toolbar in Nautilus (Ctrl+F).</p>
+          <p><strong>File properties:</strong> Right-click → Properties — shows file size, type, permissions, dates.</p>
+          <p><strong>File types and extensions:</strong> .txt (text), .doc/.odt (word processor), .jpg/.png (image), .mp3 (audio), .ods (spreadsheet).</p>
+        `
+      },
+      {
+        title: "2.4–2.5 Applications & Printing",
+        body: `
+          <p><strong>Opening applications:</strong> Applications menu (top panel) → select the category → click the application. Or double-click a desktop shortcut.</p>
+          <p><strong>Keyboard shortcuts:</strong> Ctrl+C (copy), Ctrl+X (cut), Ctrl+V (paste), Ctrl+Z (undo), Ctrl+S (save), Ctrl+P (print), Alt+F4 (close window).</p>
+          <p><strong>Compressing files:</strong> Right-click → Create Archive — creates a .zip or .tar.gz file to reduce size for storage or email.</p>
+          <p><strong>Printing:</strong></p>
+          <ul>
+            <li>File → Print (or Ctrl+P) in any application</li>
+            <li>Choose printer, number of copies, page range</li>
+            <li>View print queue: System → Administration → Printing</li>
+            <li><strong>Pause a print job</strong> — open the print manager, select the job, click Pause</li>
+            <li><strong>Delete a print job</strong> — select the job, click Delete/Cancel</li>
+          </ul>
+        `
+      }
+    ],
+    flashcards: [
+      {f:"What happens during the computer boot process?", b:"The BIOS (in ROM) runs first, then loads the Operating System from the hard disk into RAM, making the system ready for use."},
+      {f:"How do you properly shut down Ubuntu?", b:"System → Log Out → Shut Down. Never just switch off power, as this can corrupt files."},
+      {f:"What is the Linux root directory?", b:"In Linux, the root of the entire file system is '/'. All files and directories branch from this single root."},
+      {f:"What is your home directory in Linux?", b:"/home/username (e.g., /home/david). This is your personal folder for documents and settings."},
+      {f:"How do you minimize, maximize, and close a window?", b:"Use the three buttons (usually top-right or top-left of the title bar): Minimize (hide to taskbar), Maximize (fill screen), Close (X)."},
+      {f:"What keyboard shortcut switches between open windows?", b:"Alt+Tab cycles through open windows. Click the window on the taskbar also switches to it."},
+      {f:"What does Ctrl+C, Ctrl+X, Ctrl+V do?", b:"Ctrl+C = Copy, Ctrl+X = Cut, Ctrl+V = Paste. These are universal shortcuts for moving/copying content."},
+      {f:"What does pressing Delete do to a file in Gnome?", b:"It moves the file to the Trash (Recycle Bin). To permanently delete, you must empty the Trash."},
+      {f:"How do you restore a deleted file in Ubuntu?", b:"Open the Trash icon, find the file, right-click → Restore. It goes back to its original location."},
+      {f:"What is the Nautilus file manager?", b:"Nautilus is the default file manager in Ubuntu's Gnome desktop. It lets you navigate, open, copy, move, and delete files and folders."},
+      {f:"How do you view a print job's progress?", b:"System → Administration → Printing opens the print manager where you can see, pause, restart, or delete print jobs."},
+      {f:"What is a file extension and give an example?", b:"A file extension is letters after the dot in a filename indicating the file type. E.g., .txt (text), .jpg (image), .odt (document), .ods (spreadsheet)."},
+      {f:"How do you change screen resolution in Ubuntu?", b:"System → Preferences → Screen Resolution. Common resolutions: 800×600, 1024×768, 1280×1024."},
+      {f:"How do you force-quit a frozen application?", b:"Right-click the taskbar and open System Monitor, find the application and click 'Kill Process'. Or use xkill from the terminal."},
+      {f:"What is the Print Screen key used for?", b:"Taking a screenshot of the entire screen. Alt+Print Screen captures only the active window."},
+    ],
+    quiz: [
+      {q:"When you press the power button to start a computer, which program runs first?", o:["The operating system","The BIOS (stored in ROM)","The file manager","The login screen"], c:1, e:"The BIOS (Basic Input Output System), stored in ROM, runs first. It checks hardware and then loads the Operating System from the hard disk."},
+      {q:"In Linux, what is the root of the entire file system?", o:["C:\\","home","/ (forward slash)","root folder"], c:2, e:"In Linux, the entire directory tree starts from / (forward slash), which is the root. This differs from Windows, where each drive has its own root (C:\\, D:\\)."},
+      {q:"What is the correct way to shut down Ubuntu Linux?", o:["Press the power button immediately","System → Log Out → Shut Down","Pull out the power cable","Just close all windows"], c:1, e:"Always use the proper shutdown procedure: System → Log Out → Shut Down. This ensures all data is saved and the OS closes cleanly."},
+      {q:"Which keyboard shortcut is used to PASTE content?", o:["Ctrl+C","Ctrl+X","Ctrl+V","Ctrl+Z"], c:2, e:"Ctrl+V = Paste. Ctrl+C = Copy, Ctrl+X = Cut, Ctrl+Z = Undo."},
+      {q:"What happens when you press Delete on a selected file in Gnome?", o:["The file is immediately and permanently deleted","The file is moved to the Trash","The file is archived","A confirmation dialog asks to delete permanently"], c:1, e:"Pressing Delete moves the file to the Trash (like a Recycle Bin). It can be restored from there until the Trash is emptied."},
+      {q:"How do you view the progress of a print job in Ubuntu?", o:["File → Print Preview","System → Administration → Printing","Application → Print Manager","Right-click the taskbar"], c:1, e:"System → Administration → Printing opens the print manager where all active and queued print jobs are shown."},
+      {q:"What does the Nautilus application do?", o:["Browse the internet","Manage system settings","Navigate and manage files and folders","Run system diagnostics"], c:2, e:"Nautilus is Ubuntu's default file manager (equivalent to Windows Explorer), used to navigate, open, copy, move, and delete files."},
+      {q:"Which keyboard shortcut takes a screenshot of only the ACTIVE window?", o:["Print Screen","Ctrl+Print Screen","Alt+Print Screen","Shift+Print Screen"], c:2, e:"Alt+Print Screen captures only the currently active window. Print Screen (without Alt) captures the entire screen."},
+      {q:"What is the keyboard shortcut for UNDO?", o:["Ctrl+U","Ctrl+Z","Ctrl+Y","Ctrl+A"], c:1, e:"Ctrl+Z is the universal Undo shortcut. Ctrl+Y is typically Redo (re-doing what was undone)."},
+      {q:"If you want to change your keyboard layout language in Ubuntu, where do you go?", o:["System → Preferences → Keyboard","Applications → Accessories → Keyboard","System → Administration → Language","Edit → Keyboard Settings"], c:0, e:"System → Preferences → Keyboard allows you to add or change keyboard layouts (e.g., adding French or Arabic input methods)."},
+    ]
+  },
+
+  // ── MODULE 3 ──────────────────────────────────────────────
+  {
+    id: 2,
+    title: "Word Processing (Writer)",
+    badge: "Module 3",
+    review: [
+      {
+        title: "3.1 Getting Started with Writer",
+        body: `
+          <p><strong>OpenOffice.org Writer</strong> is a full-featured word processing application similar to Microsoft Word.</p>
+          <p><strong>Opening/closing:</strong> Applications → Office → OpenOffice.org Writer. To close: File → Exit.</p>
+          <p><strong>Creating a document:</strong> File → New → Text Document (or Ctrl+N).</p>
+          <p><strong>Saving a document:</strong></p>
+          <ul>
+            <li>File → Save (Ctrl+S) — saves in current format</li>
+            <li>File → Save As — saves with a new name, location, or format</li>
+          </ul>
+          <p><strong>File formats:</strong></p>
+          <ul>
+            <li><strong>.odt</strong> — OpenDocument Text (default for Writer)</li>
+            <li><strong>.doc</strong> — Microsoft Word format</li>
+            <li><strong>.rtf</strong> — Rich Text Format (universal compatibility)</li>
+            <li><strong>.txt</strong> — Plain text (no formatting)</li>
+            <li><strong>.html</strong> — Web page format</li>
+          </ul>
+          <p><strong>Switching between open documents:</strong> Window menu or the taskbar.</p>
+        `
+      },
+      {
+        title: "3.2 Text Editing",
+        body: `
+          <p><strong>Inserting and deleting text:</strong> Click to position cursor, type to insert. Backspace deletes character to the left; Delete key removes character to the right.</p>
+          <p><strong>Select text:</strong> Click and drag. Ctrl+A selects all. Double-click selects a word. Triple-click selects a paragraph.</p>
+          <p><strong>Find &amp; Replace:</strong> Ctrl+H — find a word and replace it with another throughout the document.</p>
+          <p><strong>Undo/Redo:</strong> Ctrl+Z (undo), Ctrl+Y (redo).</p>
+          <p><strong>Spell check:</strong> Tools → Spelling and Grammar (F7). Misspelled words are underlined in red.</p>
+          <p><strong>AutoCorrect:</strong> Automatically fixes common spelling mistakes as you type.</p>
+        `
+      },
+      {
+        title: "3.3 Text Formatting",
+        body: `
+          <p><strong>Character formatting</strong> (affects selected text):</p>
+          <ul>
+            <li><strong>Font</strong> — typeface style (Arial, Times New Roman)</li>
+            <li><strong>Size</strong> — measured in points (pt). 12pt is standard body text</li>
+            <li><strong>Bold</strong> (Ctrl+B), <strong>Italic</strong> (Ctrl+I), <strong>Underline</strong> (Ctrl+U)</li>
+            <li><strong>Colour</strong> — text color and highlight color</li>
+            <li><strong>Subscript/Superscript</strong> — H₂O, x²</li>
+          </ul>
+          <p><strong>Paragraph formatting:</strong></p>
+          <ul>
+            <li><strong>Alignment</strong> — Left, Right, Centre (Ctrl+E), Justify (Ctrl+J)</li>
+            <li><strong>Line spacing</strong> — single, 1.5, double</li>
+            <li><strong>Indents</strong> — first line indent, hanging indent, left/right indent</li>
+            <li><strong>Bullets and numbering</strong> — Format → Bullets and Numbering</li>
+          </ul>
+          <p><strong>Styles</strong> — Pre-defined formatting sets (Heading 1, Heading 2, Body Text). Ensure consistent formatting throughout a document.</p>
+        `
+      },
+      {
+        title: "3.4 Page Formatting & Tables",
+        body: `
+          <p><strong>Page setup:</strong> Format → Page — set margins, orientation (portrait/landscape), paper size (A4, Letter).</p>
+          <p><strong>Headers and Footers:</strong> Insert → Header/Footer — content that repeats on every page (title, page numbers, date).</p>
+          <p><strong>Page numbers:</strong> Insert → Footer → then Insert → Fields → Page Number.</p>
+          <p><strong>Inserting Tables:</strong> Table → Insert Table — specify rows and columns. Use Tab to move between cells. Tab in the last cell adds a new row.</p>
+          <p><strong>Table operations:</strong></p>
+          <ul>
+            <li>Insert/delete rows and columns: right-click in table</li>
+            <li>Merge cells: select cells → Table → Merge Cells</li>
+            <li>Split cells: Table → Split Cells</li>
+            <li>Table borders and shading: Table → Table Properties</li>
+          </ul>
+          <p><strong>Inserting images:</strong> Insert → Picture → From File. Resize by dragging handles.</p>
+          <p><strong>Mail Merge:</strong> Used to create personalised letters. Main document + data source (spreadsheet or database) = personalised documents.</p>
+        `
+      },
+      {
+        title: "3.5 Printing",
+        body: `
+          <p><strong>Print Preview:</strong> File → Page Preview — see how the document will look before printing.</p>
+          <p><strong>Printing:</strong> File → Print (Ctrl+P). Options include:</p>
+          <ul>
+            <li>Printer selection</li>
+            <li>Page range (all, current page, specific pages e.g., 1-3, 5)</li>
+            <li>Number of copies</li>
+            <li>Collate — prints pages in order for each copy</li>
+            <li>Print to file — saves as PostScript or PDF</li>
+          </ul>
+        `
+      }
+    ],
+    flashcards: [
+      {f:"What is the default file extension for OpenOffice Writer documents?", b:".odt (OpenDocument Text). Writer can also save as .doc (Word), .rtf, .txt, .html."},
+      {f:"What keyboard shortcut opens Find & Replace?", b:"Ctrl+H. Ctrl+F opens just Find (without Replace)."},
+      {f:"What is the difference between Save and Save As?", b:"Save (Ctrl+S) saves the file in its current location and format. Save As lets you choose a new name, location, or file format."},
+      {f:"What is text alignment and name the four types?", b:"Alignment controls how text lines up: Left (Ctrl+L), Right (Ctrl+R), Centre (Ctrl+E), Justify (Ctrl+J — aligns to both margins)."},
+      {f:"How do you make text bold, italic, or underlined?", b:"Ctrl+B (Bold), Ctrl+I (Italic), Ctrl+U (Underline). Or use the toolbar buttons."},
+      {f:"What is the purpose of the Mail Merge function?", b:"Mail merge combines a standard letter (main document) with a list of names/addresses (data source) to produce personalised letters for many recipients."},
+      {f:"How do you add a new row at the end of a table in Writer?", b:"Press Tab when the cursor is in the last cell of the table — this automatically adds a new row."},
+      {f:"What is a Header and Footer?", b:"Text that appears at the top (header) or bottom (footer) of every page. Typically used for document title, author, page numbers, and dates."},
+      {f:"How is font size measured?", b:"In points (pt). 12pt is standard body text. 72pt = 1 inch of height. Common sizes: 10pt (small), 12pt (normal), 14pt+ (headings)."},
+      {f:"What does the Spelling and Grammar check do?", b:"Tools → Spelling and Grammar (F7) checks the document for spelling errors (red underline) and grammar issues (green underline)."},
+      {f:"What is the difference between portrait and landscape orientation?", b:"Portrait = tall page (taller than wide — standard for letters). Landscape = wide page (wider than tall — good for tables/spreadsheets)."},
+      {f:"What are Styles in Writer?", b:"Styles are named collections of formatting settings (e.g., Heading 1 = Arial 16pt Bold). They ensure consistent formatting and make it easy to reformat the whole document at once."},
+      {f:"How do you merge cells in a table?", b:"Select the cells to merge, then: Table → Merge Cells. Merging combines multiple cells into one."},
+      {f:"What keyboard shortcut selects ALL text in a document?", b:"Ctrl+A selects all text and objects in the document."},
+      {f:"What is RTF format?", b:"Rich Text Format (.rtf) — a file format that preserves basic formatting (bold, fonts, etc.) and can be opened by almost any word processor across different operating systems."},
+    ],
+    quiz: [
+      {q:"What is the default file format for OpenOffice.org Writer?", o:[".doc",".txt",".odt",".rtf"], c:2, e:".odt (OpenDocument Text) is the default format for Writer. It is an open standard format. .doc is Microsoft Word's format."},
+      {q:"Which keyboard shortcut opens the Find and Replace dialog in Writer?", o:["Ctrl+F","Ctrl+H","Ctrl+R","Ctrl+G"], c:1, e:"Ctrl+H opens Find and Replace. Ctrl+F opens the Find toolbar only (no replace function)."},
+      {q:"Which alignment option makes text line up evenly on BOTH the left and right margins?", o:["Left alignment","Right alignment","Centre alignment","Justify"], c:3, e:"Justify alignment (Ctrl+J) spreads text to align with both the left and right margins. It is commonly used in books and newspapers."},
+      {q:"How do you add a new row at the bottom of a table?", o:["Insert → Table → Row","Right-click → Insert Row Below","Press Tab in the last cell","Press Enter in the last cell"], c:2, e:"Pressing Tab while in the last cell of a table automatically creates a new row at the bottom."},
+      {q:"What does Mail Merge do?", o:["Merges two documents into one","Creates personalised letters by combining a template with a data source","Sends documents by email","Merges formatting styles"], c:1, e:"Mail Merge combines a standard letter template with a data source (like a spreadsheet of names/addresses) to generate personalised documents for multiple recipients."},
+      {q:"Which file format preserves basic formatting and works across different word processors?", o:[".txt",".odt",".rtf",".html"], c:2, e:"RTF (Rich Text Format) preserves basic formatting (fonts, bold, etc.) and can be opened by virtually any word processor regardless of operating system."},
+      {q:"What is the keyboard shortcut for UNDO in Writer?", o:["Ctrl+Y","Ctrl+Z","Ctrl+U","Ctrl+B"], c:1, e:"Ctrl+Z undoes the last action. Ctrl+Y redoes (repeats) the last undone action."},
+      {q:"Where do you set page margins and orientation in Writer?", o:["Insert → Page","Tools → Options","Format → Page","Edit → Page Setup"], c:2, e:"Format → Page opens the page settings where you can change margins, orientation (portrait/landscape), and paper size."},
+      {q:"Which keyboard shortcut runs the Spelling and Grammar check?", o:["F5","F7","F9","F12"], c:1, e:"F7 opens the Spelling and Grammar checker (also Tools → Spelling and Grammar)."},
+      {q:"What happens when you press Ctrl+A in a document?", o:["Saves the document","Opens a new document","Selects all content in the document","Centers the text"], c:2, e:"Ctrl+A selects all content in the document. This is useful before applying formatting to the entire document at once."},
+    ]
+  },
+
+  // ── MODULE 4 ──────────────────────────────────────────────
+  {
+    id: 3,
+    title: "Spreadsheets (Calc)",
+    badge: "Module 4",
+    review: [
+      {
+        title: "4.1 Getting Started with Calc",
+        body: `
+          <p><strong>OpenOffice.org Calc</strong> is a spreadsheet application used for numerical data, calculations, and charts. Similar to Microsoft Excel.</p>
+          <p><strong>Spreadsheet structure:</strong></p>
+          <ul>
+            <li><strong>Rows</strong> — numbered 1, 2, 3... (horizontal)</li>
+            <li><strong>Columns</strong> — lettered A, B, C... then AA, AB... (vertical)</li>
+            <li><strong>Cell</strong> — intersection of a row and column. Address e.g., C11 = column C, row 11</li>
+            <li><strong>Worksheet</strong> — a single grid of cells. Multiple worksheets in a workbook (tabs at bottom)</li>
+          </ul>
+          <p><strong>File formats:</strong></p>
+          <ul>
+            <li><strong>.ods</strong> — OpenDocument Spreadsheet (default)</li>
+            <li><strong>.xls</strong> — Microsoft Excel format</li>
+            <li><strong>.csv</strong> — Comma-Separated Values (data only, no formatting)</li>
+          </ul>
+          <p><strong>Toolbars:</strong> Standard toolbar (shortcuts), Format toolbar (formatting), Formula bar (shows/edits cell content/formulas).</p>
+        `
+      },
+      {
+        title: "4.2 Entering & Editing Data",
+        body: `
+          <p><strong>Types of data in cells:</strong></p>
+          <ul>
+            <li><strong>Numbers</strong> — numeric values (right-aligned by default)</li>
+            <li><strong>Text/Labels</strong> — descriptive text (left-aligned by default)</li>
+            <li><strong>Dates</strong> — recognised date formats</li>
+            <li><strong>Formulas</strong> — calculations starting with = (equals sign)</li>
+          </ul>
+          <p><strong>Editing a cell:</strong> Double-click the cell to edit. Press Delete to clear contents. Press F2 to edit the active cell.</p>
+          <p><strong>AutoFill:</strong> Click and drag the small black square (fill handle) at the bottom-right of a cell to extend a series (e.g., Jan, Feb, Mar or 1, 2, 3...).</p>
+          <p><strong>Selecting ranges:</strong> Click and drag to select a range (e.g., A1:C5). Ctrl+Click to select non-adjacent cells.</p>
+          <p><strong>Inserting/deleting rows and columns:</strong> Right-click the row/column header → Insert or Delete.</p>
+        `
+      },
+      {
+        title: "4.3 Formulas & Functions",
+        body: `
+          <p>All formulas start with an <strong>=</strong> sign. Example: <code>=A1+B1</code> adds the values in A1 and B1.</p>
+          <p><strong>Arithmetic operators:</strong> + (add), - (subtract), * (multiply), / (divide), ^ (power).</p>
+          <p><strong>Common Functions:</strong></p>
+          <ul>
+            <li><code>=SUM(A1:A10)</code> — adds all values in A1 to A10</li>
+            <li><code>=AVERAGE(A1:A10)</code> — calculates the mean</li>
+            <li><code>=MIN(A1:A10)</code> — finds the smallest value</li>
+            <li><code>=MAX(A1:A10)</code> — finds the largest value</li>
+            <li><code>=COUNT(A1:A10)</code> — counts cells with numbers</li>
+            <li><code>=IF(condition, value_if_true, value_if_false)</code> — conditional formula</li>
+          </ul>
+          <p><strong>Cell References:</strong></p>
+          <ul>
+            <li><strong>Relative</strong> (A1) — changes when formula is copied to another cell</li>
+            <li><strong>Absolute</strong> ($A$1) — stays fixed when copied (press F4 to add $)</li>
+            <li><strong>Mixed</strong> ($A1 or A$1) — one part fixed, one part relative</li>
+          </ul>
+          <p><strong>#ERROR codes:</strong> #DIV/0! (divide by zero), #VALUE! (wrong data type), #REF! (invalid cell reference), #NAME? (unknown function name).</p>
+        `
+      },
+      {
+        title: "4.4 Formatting & Charts",
+        body: `
+          <p><strong>Cell formatting:</strong> Format → Cells (Ctrl+1) — change number format, font, alignment, borders, background colour.</p>
+          <p><strong>Number formats:</strong> General, Number (decimal places), Currency (£, $, €), Percentage (%), Date, Time.</p>
+          <p><strong>Row height / Column width:</strong> Drag the border between row/column headers, or Format → Row/Column → Optimal Height/Width.</p>
+          <p><strong>Freeze rows/columns:</strong> View → Freeze Rows and Columns — keeps headers visible while scrolling.</p>
+          <p><strong>Creating a chart:</strong></p>
+          <ol>
+            <li>Select the data range including labels</li>
+            <li>Insert → Chart</li>
+            <li>Choose chart type (bar, line, pie, etc.)</li>
+            <li>Set titles, legend, data labels</li>
+          </ol>
+          <p><strong>Chart types and uses:</strong></p>
+          <ul>
+            <li><strong>Bar/Column chart</strong> — comparing categories</li>
+            <li><strong>Line chart</strong> — showing trends over time</li>
+            <li><strong>Pie chart</strong> — showing parts of a whole (proportions)</li>
+          </ul>
+          <p><strong>Sorting data:</strong> Data → Sort — sort rows by one or more column values (ascending A-Z or descending Z-A).</p>
+          <p><strong>Filtering data:</strong> Data → AutoFilter — show only rows matching certain criteria.</p>
+        `
+      },
+      {
+        title: "4.5 Printing Spreadsheets",
+        body: `
+          <p><strong>Print Preview:</strong> File → Page Preview — see how the spreadsheet will print.</p>
+          <p><strong>Print area:</strong> Format → Print Ranges → Define — sets which cells will print.</p>
+          <p><strong>Print settings:</strong> File → Print — choose page orientation (landscape often better for wide spreadsheets), fit to page, page range.</p>
+          <p><strong>Printing row/column headers:</strong> Format → Print Ranges → Edit — include row and column headings on printed pages.</p>
+          <p><strong>Page breaks:</strong> Insert → Manual Break — adds a page break at a specific row or column.</p>
+        `
+      }
+    ],
+    flashcards: [
+      {f:"What is a cell address and give an example?", b:"A cell address identifies a cell by its column letter and row number. Example: B3 = column B, row 3. C11 = column C, row 11."},
+      {f:"What character must every formula in Calc start with?", b:"Every formula must start with = (equals sign). E.g., =A1+B2, =SUM(A1:A10)."},
+      {f:"What is the difference between a relative and absolute cell reference?", b:"Relative (A1) adjusts when copied to another cell. Absolute ($A$1) stays fixed no matter where the formula is copied. Press F4 to toggle."},
+      {f:"What does the =SUM(A1:A10) formula do?", b:"It adds together all numeric values in cells A1 through A10 inclusive. The colon (:) indicates a range."},
+      {f:"What does the =AVERAGE(B1:B5) function return?", b:"It returns the arithmetic mean (average) of the values in cells B1 to B5."},
+      {f:"What does the =IF() function do?", b:"=IF(condition, value_if_true, value_if_false) — tests a condition and returns one value if true, another if false. E.g., =IF(A1>50,\"Pass\",\"Fail\")."},
+      {f:"What is AutoFill in Calc?", b:"AutoFill lets you drag the fill handle (small square at bottom-right of a cell) to automatically extend a series like months (Jan, Feb, Mar...) or numbers (1, 2, 3...)."},
+      {f:"What chart type is best for showing trends over time?", b:"A Line chart is best for showing how values change over time (e.g., monthly sales trends)."},
+      {f:"What chart type is best for showing parts of a whole?", b:"A Pie chart shows proportions — how each part contributes to the total (e.g., market share percentages). Best used when there are few categories."},
+      {f:"What does the #DIV/0! error mean?", b:"The formula is attempting to divide by zero (e.g., =A1/B1 where B1 is empty or contains 0). Division by zero is mathematically undefined."},
+      {f:"What is the default file extension for Calc spreadsheets?", b:".ods (OpenDocument Spreadsheet). Calc can also open/save .xls (Excel) and .csv files."},
+      {f:"How do you freeze rows in Calc so headers stay visible while scrolling?", b:"Click on the cell below and to the right of where you want to freeze, then: View → Freeze Rows and Columns."},
+      {f:"What does Data → AutoFilter do?", b:"AutoFilter adds dropdown arrows to column headers, allowing you to show only rows that match selected criteria (filtering the data)."},
+      {f:"How do you sort data in Calc?", b:"Select the data range, then Data → Sort. Choose the column to sort by and direction (ascending A→Z or descending Z→A)."},
+      {f:"What is a CSV file?", b:"Comma-Separated Values — a plain text file where values are separated by commas. Contains data only (no formatting). Compatible with almost every spreadsheet application."},
+    ],
+    quiz: [
+      {q:"Which cell address refers to column D, row 7?", o:["7D","D7","4:7","Row7ColD"], c:1, e:"Cell addresses are written as column letter followed by row number: D7 = column D, row 7."},
+      {q:"What symbol must every formula begin with in Calc?", o:["+ (plus)","# (hash)","= (equals)","@ (at)"], c:2, e:"Every formula must start with = (the equals sign). Without it, Calc treats the entry as text, not a formula."},
+      {q:"What is the correct formula to add all values from A1 to A10?", o:["=ADD(A1,A10)","=SUM(A1,A10)","=SUM(A1:A10)","=TOTAL(A1:A10)"], c:2, e:"=SUM(A1:A10) uses the colon (:) to denote a range from A1 to A10. =SUM(A1,A10) would only add those two specific cells, not the range."},
+      {q:"When you copy a formula with absolute reference $A$1 to another cell, what happens to $A$1?", o:["It changes to match the new position","It stays as $A$1","It becomes an error","It becomes A1"], c:1, e:"An absolute reference ($A$1) never changes when copied. The $ signs 'lock' the column and row. This is useful for referencing fixed values like tax rates."},
+      {q:"Which function finds the LARGEST value in a range?", o:["=LARGEST()","=TOP()","=MAX()","=HIGH()"], c:2, e:"=MAX(range) returns the largest value. =MIN(range) returns the smallest. These are among the most commonly used statistical functions."},
+      {q:"What chart type is most appropriate for showing market share as parts of a whole?", o:["Line chart","Bar chart","Pie chart","Scatter chart"], c:2, e:"A Pie chart shows how parts relate to the whole (proportions/percentages). It works best with a small number of categories (ideally 2-6)."},
+      {q:"What does the #DIV/0! error indicate?", o:["Division is not supported","A cell reference is invalid","The formula is dividing by zero","Wrong data type used"], c:2, e:"#DIV/0! appears when a formula tries to divide by zero. Check that the divisor cell is not empty or zero."},
+      {q:"Which formula correctly counts only cells containing numbers in range B1:B20?", o:["=COUNTA(B1:B20)","=COUNT(B1:B20)","=SUM(B1:B20)","=NUMBER(B1:B20)"], c:1, e:"=COUNT() counts only cells with numeric values. =COUNTA() counts all non-empty cells (including text). =SUM() adds the values, not counts them."},
+      {q:"What file format allows a spreadsheet to be opened by almost any application, preserving only data?", o:[".ods",".xls",".csv",".xlsx"], c:2, e:"CSV (Comma-Separated Values) is a plain text format with values separated by commas. It loses all formatting but works with virtually any application."},
+      {q:"What does Data → AutoFilter do?", o:["Automatically fills in a series","Sorts data alphabetically","Adds dropdown menus to filter rows by criteria","Removes duplicate values"], c:2, e:"AutoFilter adds dropdown arrows to column headers, allowing you to display only rows that match specific criteria without deleting any data."},
+    ]
+  },
+
+  // ── MODULE 5 ──────────────────────────────────────────────
+  {
+    id: 4,
+    title: "Databases (Base)",
+    badge: "Module 5",
+    review: [
+      {
+        title: "5.1 Database Concepts",
+        body: `
+          <p><strong>Database</strong> — An organised collection of related data stored and accessed electronically. Designed to efficiently store, retrieve, and manage large amounts of information.</p>
+          <p><strong>Database structure:</strong></p>
+          <ul>
+            <li><strong>Table</strong> — Collection of data about ONE topic (e.g., Employees, Products)</li>
+            <li><strong>Record</strong> — A single row in a table (e.g., one employee's data)</li>
+            <li><strong>Field</strong> — A column in a table (e.g., Name, Date of Birth, Salary)</li>
+          </ul>
+          <p><strong>Field Data Types in OpenOffice Base:</strong></p>
+          <ul>
+            <li><strong>Text</strong> — names, addresses, phone numbers (numbers you won't calculate)</li>
+            <li><strong>Memo</strong> — large amounts of text (paragraphs, notes)</li>
+            <li><strong>Number / Integer / Decimal</strong> — numeric data for calculations</li>
+            <li><strong>Date</strong> — stores dates; allows date arithmetic</li>
+            <li><strong>Boolean</strong> — Yes/No, True/False values</li>
+            <li><strong>Image</strong> — photos, logos</li>
+          </ul>
+          <p><strong>Primary Key</strong> — A field with a UNIQUE value for each record, used to identify it. E.g., Staff ID, ISBN, Student Number. No two records can have the same primary key value.</p>
+          <p><strong>Index</strong> — A structure that speeds up searches on a particular field. Like an index in a book — you go directly to the data instead of scanning every record.</p>
+        `
+      },
+      {
+        title: "5.2 Tables & Relationships",
+        body: `
+          <p><strong>Creating a table in Base:</strong> Database window → Tables → Create Table in Design View. Define field names, data types, and properties.</p>
+          <p><strong>Field properties:</strong></p>
+          <ul>
+            <li><strong>Field size</strong> — maximum characters (for text fields)</li>
+            <li><strong>Required</strong> — whether the field must have a value (not null)</li>
+            <li><strong>Default value</strong> — value automatically entered if none is provided</li>
+            <li><strong>Validation rule</strong> — restricts what data can be entered</li>
+          </ul>
+          <p><strong>Relationships (Table Linking):</strong> Link tables using a shared field. This avoids data duplication and ensures consistency.</p>
+          <ul>
+            <li><strong>One-to-Many</strong> — One record in Table A links to many records in Table B (most common). E.g., One customer has many orders.</li>
+            <li><strong>Foreign key</strong> — The field in the "many" table that references the primary key of the "one" table.</li>
+          </ul>
+          <p><strong>Referential Integrity</strong> — Rules that ensure relationships between tables remain valid. E.g., you cannot have an order for a customer that doesn't exist.</p>
+        `
+      },
+      {
+        title: "5.3 Forms",
+        body: `
+          <p><strong>Forms</strong> are user-friendly interfaces for entering and viewing data in a table. Instead of working directly in the table grid, users see a designed screen layout.</p>
+          <p><strong>Creating a form:</strong> Database window → Forms → Use Wizard to Create Form. Follow the wizard to choose table/fields, layout, and style.</p>
+          <p><strong>Form controls:</strong> text boxes, labels, checkboxes, dropdown lists, buttons.</p>
+          <p><strong>Navigation buttons</strong> at the bottom of a form: First record |◀, Previous ◀, Next ▶, Last record ▶|, New record ▶*.</p>
+          <p><strong>Benefits of forms:</strong> Easier data entry, validation, can show data from related tables, more attractive than raw table view.</p>
+        `
+      },
+      {
+        title: "5.4 Queries",
+        body: `
+          <p><strong>Queries</strong> extract specific information from one or more tables based on criteria. A query is a question you ask the database.</p>
+          <p><strong>Creating a query:</strong> Database window → Queries → Create Query in Design View. Add tables, choose fields, set criteria.</p>
+          <p><strong>Query criteria examples:</strong></p>
+          <ul>
+            <li><code>="London"</code> — equals London</li>
+            <li><code>&gt;50000</code> — greater than 50,000</li>
+            <li><code>Like "S*"</code> — starts with S (wildcard)</li>
+            <li><code>Between 01/01/2000 AND 31/12/2000</code> — date range</li>
+          </ul>
+          <p><strong>Sorting in queries:</strong> Set Ascending or Descending order for result fields.</p>
+          <p><strong>Wildcards:</strong> * matches any number of characters. ? matches a single character. Used in Like criteria.</p>
+        `
+      },
+      {
+        title: "5.5 Reports",
+        body: `
+          <p><strong>Reports</strong> produce formatted, printable summaries of database data. Used for printing invoices, lists, summaries, etc.</p>
+          <p><strong>Creating a report:</strong> Database window → Reports → Use Wizard to Create Report. Choose table/query, fields, grouping, sorting, and layout.</p>
+          <p><strong>Grouping in reports:</strong> Group data by a field (e.g., group sales by department) and calculate subtotals.</p>
+          <p><strong>Sorting in reports:</strong> Set the order in which records appear.</p>
+          <p><strong>Report sections:</strong> Report Header (appears once at top), Page Header (top of each page), Detail (one line per record), Page Footer (bottom of each page), Report Footer (once at the end — totals).</p>
+        `
+      }
+    ],
+    flashcards: [
+      {f:"What is a database?", b:"An organised collection of related data stored electronically, designed to efficiently store, retrieve, and manage large amounts of information."},
+      {f:"What is the difference between a table, record, and field?", b:"Table = collection of data on one topic. Record = one row (one item's data). Field = one column (one attribute, like 'Name' or 'Date of Birth')."},
+      {f:"What is a primary key?", b:"A field (or combination of fields) with a UNIQUE value for each record, used to identify it. No two records can have the same primary key. E.g., Staff ID, ISBN."},
+      {f:"Why use a Text field for phone numbers instead of a Number field?", b:"Phone numbers may have leading zeros (e.g., 0800...) and you won't perform arithmetic on them. Number fields drop leading zeros; Text fields preserve them."},
+      {f:"What is an Index in a database?", b:"An index speeds up searching/sorting on a field by maintaining a sorted reference structure. Like a book index — you find data directly instead of scanning every record."},
+      {f:"What is a one-to-many relationship?", b:"One record in Table A (parent) is linked to many records in Table B (child). E.g., one Customer can have many Orders."},
+      {f:"What is a foreign key?", b:"A field in the 'many' side of a relationship that holds the primary key value of the related record in the 'one' side. It creates the link between tables."},
+      {f:"What is Referential Integrity?", b:"Rules that ensure relationships between tables remain valid — e.g., you cannot add an order for a customer that doesn't exist in the Customers table."},
+      {f:"What is the purpose of a Form in a database?", b:"Forms provide a user-friendly interface for entering and viewing data. They are easier to use than the raw table grid and can include validation."},
+      {f:"What is a Query?", b:"A query extracts specific records from a table or tables based on criteria. It's a question you ask the database (e.g., 'Show all employees earning over £50,000')."},
+      {f:"What does the wildcard * mean in a query?", b:"* matches any number of characters. E.g., Like 'S*' finds all values starting with S (Smith, Stevens, etc.)."},
+      {f:"What is a Report in a database?", b:"A report produces a formatted, printable output of database data — used for printing lists, summaries, invoices, etc."},
+      {f:"What is the Boolean field type?", b:"A field type that stores only two possible values: Yes/No, True/False, or 1/0. Used for binary attributes like 'Is Active?' or 'Has Paid?'."},
+      {f:"What does 'normalisation' mean in database design?", b:"Normalisation is the process of organising data to reduce redundancy and improve integrity. A key rule: each table should contain data about only ONE topic."},
+      {f:"What are the navigation buttons at the bottom of a form?", b:"First record |◀, Previous ◀, Next ▶, Last ▶|, New record ▶*. Used to move between records in a form."},
+    ],
+    quiz: [
+      {q:"What is the correct term for a single row of data in a database table?", o:["Field","Column","Record","Entry"], c:2, e:"A record is a single row in a table containing all data about one item (e.g., one employee). A field is a column (one attribute)."},
+      {q:"Which field type should be used to store a telephone number?", o:["Number","Integer","Text","Decimal"], c:2, e:"Phone numbers should be stored as Text because they may have leading zeros (which numbers drop) and you won't perform arithmetic on them."},
+      {q:"What makes a primary key unique?", o:["It is the first field in the table","No two records can have the same primary key value","It must be a number","It is automatically generated"], c:1, e:"A primary key uniquely identifies each record. No two records in a table can share the same primary key value. It may be a number, text, or combination."},
+      {q:"In a one-to-many relationship, which side holds the foreign key?", o:["The 'one' side (parent table)","The 'many' side (child table)","Both tables","Neither — it's stored separately"], c:1, e:"The foreign key is in the 'many' side (child table). It stores the primary key of the related record in the parent table, creating the link."},
+      {q:"What is an Index used for in a database?", o:["Organizing tables in alphabetical order","Speeding up searches and sorting on a field","Creating relationships between tables","Preventing duplicate records"], c:1, e:"An index maintains a sorted reference structure for a field, making searches and sorts much faster — similar to an index at the back of a book."},
+      {q:"What is the purpose of a Form in a database?", o:["To define the structure of a table","To run calculations on data","To provide a user-friendly interface for data entry and viewing","To print formatted reports"], c:2, e:"Forms provide a friendlier interface than the raw table grid for entering and viewing data. They can include instructions, validation, and a customized layout."},
+      {q:"What does the wildcard character * represent in a query?", o:["Exactly one character","A numeric value","Any number of any characters","The end of a text string"], c:2, e:"The * wildcard matches zero or more of any character. E.g., Like 'A*' finds Anne, Andrew, Alice. The ? wildcard matches exactly one character."},
+      {q:"Which query criterion would find all records where Salary is greater than 50000?", o:["= 50000","< 50000","> 50000","<> 50000"], c:2, e:"> 50000 means 'greater than 50,000'. < means less than, = means equals, <> means not equal to."},
+      {q:"What appears in the Report Footer section of a report?", o:["The report title","A summary or totals for the entire report","Column headers","Page numbers"], c:1, e:"The Report Footer appears once at the very end of the report and typically contains grand totals or summary statistics for all data."},
+      {q:"What is Referential Integrity?", o:["A rule ensuring all fields have values","Rules that keep relationships between tables valid","A password protection feature","A method for indexing fields"], c:1, e:"Referential Integrity enforces rules on related tables — e.g., you cannot add a record in a child table that references a non-existent record in the parent table."},
+    ]
+  },
+
+  // ── MODULE 6 ──────────────────────────────────────────────
+  {
+    id: 5,
+    title: "Presentation",
+    badge: "Module 6",
+    review: [
+      {
+        title: "6.1 Getting Started with Impress",
+        body: `
+          <p><strong>OpenOffice.org Impress</strong> is a presentation application used to create slideshows. Similar to Microsoft PowerPoint.</p>
+          <p><strong>Opening/closing:</strong> Applications → Office → OpenOffice.org Impress. Close: File → Exit.</p>
+          <p><strong>File formats:</strong></p>
+          <ul>
+            <li><strong>.odp</strong> — OpenDocument Presentation (default)</li>
+            <li><strong>.ppt</strong> — Microsoft PowerPoint format</li>
+            <li><strong>.pps</strong> — PowerPoint Show (opens directly in slideshow mode)</li>
+            <li><strong>.html</strong> — Web presentation</li>
+          </ul>
+          <p><strong>Views in Impress:</strong></p>
+          <ul>
+            <li><strong>Normal</strong> — main editing view (slide + outline + notes)</li>
+            <li><strong>Outline</strong> — text-only view of all slide titles and content</li>
+            <li><strong>Slide Sorter</strong> — thumbnail overview of all slides (good for rearranging)</li>
+            <li><strong>Notes</strong> — edit speaker notes for each slide</li>
+            <li><strong>Slide Show</strong> (F5) — runs the full presentation</li>
+          </ul>
+        `
+      },
+      {
+        title: "6.2 Creating & Editing Slides",
+        body: `
+          <p><strong>Adding a new slide:</strong> Insert → New Slide (or right-click slide panel → Insert Slide).</p>
+          <p><strong>Deleting a slide:</strong> Right-click the slide → Delete Slide.</p>
+          <p><strong>Rearranging slides:</strong> In Slide Sorter view, drag slides to new positions.</p>
+          <p><strong>Slide layouts:</strong> Pre-designed arrangements of content placeholders (title, content, text, picture, etc.). Format → Layout to change layout.</p>
+          <p><strong>Adding text:</strong> Click a text placeholder and type. Use the text tool for text outside placeholders.</p>
+          <p><strong>Inserting objects:</strong></p>
+          <ul>
+            <li>Images: Insert → Picture → From File</li>
+            <li>Charts: Insert → Chart</li>
+            <li>Tables: Insert → Table</li>
+            <li>Shapes: View → Drawing toolbar → draw shapes</li>
+            <li>Text boxes: Insert → Text Box</li>
+          </ul>
+          <p><strong>Working with objects:</strong> Click to select, drag to move, drag handles to resize, delete key to remove.</p>
+        `
+      },
+      {
+        title: "6.3 Slide Master & Design",
+        body: `
+          <p><strong>Slide Master (Master Slide)</strong> — A template that controls the appearance of all slides: background, fonts, colours, and logo placement. Changes to the master affect every slide.</p>
+          <p><strong>Accessing the master:</strong> View → Master → Slide Master.</p>
+          <p><strong>Design templates:</strong> Format → Slide Design — choose from built-in design templates to give your presentation a professional look.</p>
+          <p><strong>Background:</strong> Format → Page → Background tab — set solid colour, gradient, or image background.</p>
+          <p><strong>Colour schemes</strong> — Coordinated sets of colours for text, background, and accents.</p>
+          <p><strong>Best practices:</strong></p>
+          <ul>
+            <li>Keep text brief — use bullet points, not paragraphs</li>
+            <li>Use high contrast between text and background</li>
+            <li>No more than 6 bullet points per slide</li>
+            <li>Consistent fonts and colours throughout</li>
+          </ul>
+        `
+      },
+      {
+        title: "6.4 Animations & Transitions",
+        body: `
+          <p><strong>Slide Transitions</strong> — Effects when moving from one slide to the next (e.g., Fade, Wipe, Dissolve).</p>
+          <ul>
+            <li>Slide Show → Slide Transition — select effect, speed (slow/medium/fast), and whether it advances on click or automatically.</li>
+            <li>Apply to All Slides for consistency.</li>
+          </ul>
+          <p><strong>Animations</strong> — Effects applied to individual objects ON a slide (text, images, shapes appearing/disappearing).</p>
+          <ul>
+            <li>Slide Show → Animation — click "Add Effect" to apply</li>
+            <li><strong>Entrance effects</strong> — object appears (Fly In, Fade In)</li>
+            <li><strong>Emphasis effects</strong> — object changes (spin, grow)</li>
+            <li><strong>Exit effects</strong> — object disappears</li>
+            <li>Trigger: On click or automatically after previous</li>
+          </ul>
+          <p><strong>Running the slideshow:</strong> F5 or Slide Show → Start from First Slide. Press Escape to exit. Right-click for navigation during the show.</p>
+        `
+      },
+      {
+        title: "6.5 Printing Presentations",
+        body: `
+          <p><strong>Printing options:</strong> File → Print opens the print dialog with options for what to print:</p>
+          <ul>
+            <li><strong>Slides</strong> — one slide per page (full size)</li>
+            <li><strong>Handouts</strong> — multiple slides per page (2, 3, 4, 6, or 9) for audience notes</li>
+            <li><strong>Notes</strong> — slides with speaker notes below</li>
+            <li><strong>Outline</strong> — text only view of all slide content</li>
+          </ul>
+          <p><strong>Print range:</strong> All slides, current slide, or specific slides (e.g., 1-3, 5).</p>
+          <p><strong>Print in black and white/greyscale</strong> — saves ink for draft printing. Set in File → Print → Options.</p>
+        `
+      }
+    ],
+    flashcards: [
+      {f:"What is the default file extension for OpenOffice Impress?", b:".odp (OpenDocument Presentation). Impress can also save as .ppt (PowerPoint) or .pps (PowerPoint Show)."},
+      {f:"What is the Slide Master?", b:"A template slide that controls the appearance of ALL slides in a presentation (background, fonts, colours, logos). Changing the master affects every slide at once."},
+      {f:"What is the difference between a Slide Transition and an Animation?", b:"Transition = effect between slides (Fade, Wipe). Animation = effect applied to an object ON a slide (text flying in, image fading in)."},
+      {f:"Which view shows all slides as thumbnails and is best for rearranging?", b:"Slide Sorter view shows thumbnails of all slides, making it easy to drag and rearrange the order."},
+      {f:"How do you start a slideshow from the beginning?", b:"Press F5, or Slide Show → Start from First Slide. Press Escape to end the show at any time."},
+      {f:"What are Handouts in Impress?", b:"A print option that puts multiple slides on one page (2, 3, 4, 6, or 9 slides per page) for distributing to the audience."},
+      {f:"What is the Outline view used for?", b:"Outline view shows only the text content of slides (titles and bullet points) — useful for reviewing and editing the text structure without design distractions."},
+      {f:"What is the difference between .ppt and .pps file formats?", b:".ppt opens in editing mode in PowerPoint/Impress. .pps (PowerPoint Show) opens directly in slideshow mode — useful for distributing finished presentations."},
+      {f:"How do you apply a transition to ALL slides at once?", b:"In Slide Show → Slide Transition, choose your transition, then click 'Apply to All Slides'."},
+      {f:"What are the three types of Animation effects?", b:"Entrance (object appears), Emphasis (object changes while visible), Exit (object disappears). Set in Slide Show → Animation."},
+      {f:"What is a layout in Impress?", b:"A slide layout is a pre-designed arrangement of content placeholder boxes (e.g., Title Slide, Title + Content, Two Content). Applied via Format → Layout."},
+      {f:"How many bullet points per slide is recommended as best practice?", b:"No more than 6 bullet points per slide. Keep text brief — slides should support the speaker, not be a script to read."},
+      {f:"What keyboard shortcut runs the presentation from the current slide?", b:"Shift+F5 starts from the current slide. F5 starts from the first slide."},
+      {f:"How do you insert an image into a slide?", b:"Insert → Picture → From File. Then select the image file and click Open. Resize by dragging the handles."},
+      {f:"What does the Notes view do?", b:"Notes view shows each slide with a text area below for speaker notes — private reminders for the presenter that don't appear on screen during the show."},
+    ],
+    quiz: [
+      {q:"What is the default file format for OpenOffice Impress presentations?", o:[".ppt",".pps",".odp",".odt"], c:2, e:".odp (OpenDocument Presentation) is Impress's native format. .ppt and .pps are Microsoft PowerPoint formats."},
+      {q:"Which Impress view is BEST for rearranging the order of slides?", o:["Normal view","Outline view","Slide Sorter view","Notes view"], c:2, e:"Slide Sorter view shows all slides as thumbnails, making it easy to see the whole presentation and drag slides into a new order."},
+      {q:"What is a Slide Master?", o:["The first slide of a presentation","A template controlling appearance of all slides","A view that shows slide thumbnails","The slide with the most content"], c:1, e:"The Slide Master is a template that controls background, fonts, and colours for all slides. Modifying it updates every slide at once."},
+      {q:"What is the difference between a transition and an animation?", o:["They are the same thing","A transition affects objects on a slide; animation affects movement between slides","A transition is the effect between slides; an animation is an effect on an object within a slide","Transitions are only for images; animations are for text"], c:2, e:"Transition = effect as you move from one slide to the next. Animation = effect on an individual object (text, image, shape) on a slide."},
+      {q:"Which keyboard shortcut starts a slideshow from the FIRST slide?", o:["F3","F5","F7","F9"], c:1, e:"F5 starts the slideshow from the first slide. Shift+F5 starts from the currently selected slide."},
+      {q:"What print option places multiple slides on each printed page for the audience?", o:["Notes","Handouts","Outline","Slides"], c:1, e:"Handouts print multiple slides per page (2, 3, 4, 6, or 9). Notes prints each slide with speaker notes. Outline prints only text content."},
+      {q:"An 'Entrance' animation effect does what?", o:["Makes an object disappear from the slide","Changes how an object looks while it's on screen","Makes an object appear on the slide","Transitions to the next slide"], c:2, e:"Entrance effects control how an object appears (enters) the slide — e.g., Fly In, Fade, Zoom. Exit effects make objects disappear."},
+      {q:"How do you add a new slide to a presentation?", o:["File → New","Edit → Insert Slide","Insert → New Slide","Format → Add Slide"], c:2, e:"Insert → New Slide adds a new slide after the current one. You can also right-click a slide in the slide panel and choose 'Insert Slide'."},
+      {q:"Which file format opens a presentation DIRECTLY in slideshow mode (without showing the editing interface)?", o:[".odp",".ppt",".pps",".otp"], c:2, e:".pps (PowerPoint Show) opens directly in presentation/slideshow mode. This is useful when distributing a finished presentation to others to view."},
+      {q:"Best practice for slide design includes:", o:["Using as much text as possible","Using many different fonts for variety","Keeping text brief with bullet points and high contrast","Using a different design on every slide"], c:2, e:"Best practice: brief text (bullet points not paragraphs), high contrast, consistent fonts/colours, no more than 6 bullets per slide. Consistent design throughout."},
+    ]
+  },
+
+  // ── MODULE 7 ──────────────────────────────────────────────
+  {
+    id: 6,
+    title: "Online Collaboration",
+    badge: "Module 7",
+    review: [
+      {
+        title: "7.1 Internet Concepts",
+        body: `
+          <p><strong>The Internet</strong> — The global network of interconnected computers communicating via <strong>TCP/IP</strong> (Transmission Control Protocol/Internet Protocol). It includes private, commercial, government, and military systems. The main high-speed links are the <em>Internet Backbone</em>.</p>
+          <p><strong>WWW (World Wide Web)</strong> — A collection of web pages (HTML documents) stored on web servers, linked by hyperlinks, and accessed via browsers. The WWW is one <em>service</em> that runs on the Internet.</p>
+          <p><strong>Key Terms:</strong></p>
+          <ul>
+            <li><strong>HTTP</strong> (HyperText Transfer Protocol) — protocol for transmitting web pages</li>
+            <li><strong>HTTPS</strong> — secure (encrypted) version of HTTP; used for banking, shopping</li>
+            <li><strong>FTP</strong> (File Transfer Protocol) — protocol for uploading/downloading files</li>
+            <li><strong>URL</strong> (Uniform Resource Locator) — the unique address of a web page (e.g., http://www.example.com/page.html)</li>
+            <li><strong>Hyperlink</strong> — clickable text or image that takes you to another web page or location</li>
+            <li><strong>ISP</strong> (Internet Service Provider) — company that provides internet access (e.g., BT, Vodafone)</li>
+          </ul>
+          <p><strong>URL Structure:</strong> <code>http://www.bbc.co.uk/news/index.html</code></p>
+          <ul>
+            <li><strong>http://</strong> — protocol</li>
+            <li><strong>www.</strong> — subdomain</li>
+            <li><strong>bbc.co.uk</strong> — domain name</li>
+            <li><strong>/news/index.html</strong> — path to specific page</li>
+          </ul>
+          <p><strong>Domain extensions:</strong> .com (commercial), .org (organisation), .gov (government), .edu (education), .co.uk (UK company), .za (South Africa).</p>
+        `
+      },
+      {
+        title: "7.2 Web Security",
+        body: `
+          <p><strong>Cookie</strong> — A small text file that a website stores on your computer to remember your preferences, login state, or browsing history. Can be used for tracking.</p>
+          <p><strong>Cache</strong> — Web pages and images stored locally on your computer so they load faster on revisit. Can be cleared to free space or solve display issues.</p>
+          <p><strong>Digital Certificate</strong> — An electronic document that verifies a website's identity and enables encrypted (HTTPS) connections. Issued by a Certificate Authority (CA). Padlock icon in browser shows a secure site.</p>
+          <p><strong>Encryption</strong> — Scrambling data so only authorised parties can read it. Used in HTTPS to protect banking and shopping transactions.</p>
+          <p><strong>Firewall</strong> — Hardware or software that controls incoming/outgoing network traffic based on security rules. Protects networks from unauthorised access.</p>
+          <p><strong>Risks:</strong></p>
+          <ul>
+            <li><strong>Virus</strong> — malicious program from downloads or email attachments</li>
+            <li><strong>Credit card fraud</strong> — only use HTTPS (padlock) for online payments; avoid unsecured sites</li>
+            <li><strong>Phishing</strong> — fake websites/emails that trick you into revealing personal details</li>
+            <li><strong>Spam</strong> — unsolicited bulk email</li>
+          </ul>
+        `
+      },
+      {
+        title: "7.3 Web Browsing (Firefox)",
+        body: `
+          <p><strong>Mozilla Firefox</strong> is an open-source web browser.</p>
+          <p><strong>Navigation:</strong></p>
+          <ul>
+            <li>Type a URL in the address bar and press Enter to go to a page</li>
+            <li>Back ← and Forward → buttons navigate history</li>
+            <li>Refresh/Reload (Ctrl+R or F5) reloads the current page</li>
+            <li>Home button goes to the set home page</li>
+            <li>Stop (X) stops loading a page</li>
+          </ul>
+          <p><strong>Bookmarks (Favourites):</strong></p>
+          <ul>
+            <li>Ctrl+D to bookmark the current page</li>
+            <li>Bookmarks → Manage Bookmarks to organise into folders</li>
+          </ul>
+          <p><strong>Tabs:</strong> Ctrl+T opens a new tab. Ctrl+W closes a tab. Ctrl+Tab switches tabs. Right-click a link → Open in New Tab.</p>
+          <p><strong>Search engines</strong> — Services that index web pages and return results based on keywords (Google, Bing, Yahoo). Use specific keywords for better results.</p>
+          <p><strong>Downloading files:</strong> Right-click a link → Save Link As. Downloads may contain viruses — always scan before opening.</p>
+          <p><strong>Browser history:</strong> Records visited pages. Clear with Ctrl+Shift+Delete.</p>
+        `
+      },
+      {
+        title: "7.4–7.6 Email (Thunderbird)",
+        body: `
+          <p><strong>Mozilla Thunderbird</strong> is an email client application.</p>
+          <p><strong>Email address format:</strong> <code>username@domain.extension</code> (e.g., john@example.com)</p>
+          <p><strong>Email protocols:</strong></p>
+          <ul>
+            <li><strong>POP3</strong> — Downloads emails from server to your computer (removes from server)</li>
+            <li><strong>IMAP</strong> — Keeps emails on the server, syncs across devices</li>
+            <li><strong>SMTP</strong> — Used to SEND emails</li>
+          </ul>
+          <p><strong>Composing emails:</strong></p>
+          <ul>
+            <li><strong>To</strong> — recipient's address</li>
+            <li><strong>CC</strong> (Carbon Copy) — sends a copy to additional recipients, visible to all</li>
+            <li><strong>BCC</strong> (Blind Carbon Copy) — copy to others without main recipient knowing</li>
+            <li><strong>Subject</strong> — brief description of the email topic</li>
+            <li><strong>Attachment</strong> — file sent with the email (Insert → Attachment)</li>
+          </ul>
+          <p><strong>Email management:</strong></p>
+          <ul>
+            <li><strong>Reply</strong> — responds to the sender only</li>
+            <li><strong>Reply All</strong> — responds to all recipients</li>
+            <li><strong>Forward</strong> — sends the email to a new recipient</li>
+            <li>Organise emails into folders</li>
+            <li>Address Book — store contacts</li>
+            <li>Mark as unread, flag important messages</li>
+          </ul>
+          <p><strong>Email risks:</strong> Spam (unsolicited bulk email — delete immediately, don't open), Phishing (fake emails impersonating institutions), Malware in attachments.</p>
+        `
+      },
+      {
+        title: "7.5 Online Communication & VoIP (Handout Extra)",
+        body: `
+          <p><strong>VoIP (Voice over Internet Protocol)</strong> — Making phone/video calls over the internet instead of traditional phone lines. Converts voice to digital data packets. Pros: much cheaper than traditional calls. Examples: Skype, WhatsApp calls.</p>
+          <p><strong>Instant Messaging (IM)</strong> — Real-time exchange of short messages, files, and audio. Requires an account and a client program. Synchronous (both parties communicate simultaneously).</p>
+          <p><strong>VPN (Virtual Private Network)</strong> — A private, encrypted communication channel that runs over a public network (the Internet). Used by companies to securely connect remote employees. Data travels encrypted, requiring authentication.</p>
+          <p><strong>DNS (Domain Name System)</strong> — The service that translates a human-readable URL (e.g., www.google.com) into its numerical IP address (e.g., 142.250.70.14). Like a phone book for the Internet.</p>
+          <p><strong>IP Address</strong> — A unique numerical identifier for every device connected to the internet. Format: four numbers 0–255 separated by dots (e.g., 192.168.1.1).</p>
+          <p><strong>Online Communities:</strong> Forums (discussion boards), Social Networks, Blogs (web+log — online diary), Microblogs (Twitter — short messages), Podcasts (subscribable audio/video), Video sharing (YouTube).</p>
+          <p><strong>Netiquette</strong> — Rules of polite online communication:</p>
+          <ul>
+            <li>Keep messages short and on-topic</li>
+            <li>Use a clear, accurate subject line in emails</li>
+            <li>Don't share others' personal details without consent</li>
+            <li>No offensive or inappropriate content</li>
+            <li>Check for errors before sending</li>
+            <li>Don't use BCC to hide recipients when CC is appropriate</li>
+            <li>Verify attachments for malware before sending</li>
+          </ul>
+          <p><strong>Pharming</strong> — A malware attack that redirects a legitimate URL to a fake (but identical-looking) website to steal data. The DNS record is poisoned. Detected only by checking the digital certificate.</p>
+        `
+      }
+    ],
+    flashcards: [
+      {f:"What is the difference between the Internet and the WWW?", b:"The Internet is the global network infrastructure (all connected computers). The WWW is just one service running on it — a collection of web pages accessed via browsers. Email and FTP are also Internet services."},
+      {f:"What does URL stand for and give an example?", b:"Uniform Resource Locator — the unique address of a web page. Example: http://www.bbc.co.uk/news/index.html"},
+      {f:"What does HTTP stand for?", b:"HyperText Transfer Protocol — the protocol used to transmit web pages over the Internet. HTTPS is the secure (encrypted) version."},
+      {f:"What does ISP stand for?", b:"Internet Service Provider — a company that provides users with access to the Internet (e.g., BT, Vodafone, Comcast)."},
+      {f:"What is FTP?", b:"File Transfer Protocol — the Internet protocol used for uploading files to or downloading files from servers."},
+      {f:"What is a Cookie?", b:"A small text file stored on your computer by a website to remember your preferences, login state, or browsing history. Can be used for personalisation or tracking."},
+      {f:"What is Cache in web browsing?", b:"Locally stored copies of web pages and images so they load faster on repeat visits. Can be cleared to fix display problems or free up disk space."},
+      {f:"What is a Digital Certificate?", b:"An electronic document that verifies a website's identity and enables encrypted HTTPS connections. Indicated by a padlock icon in the browser address bar."},
+      {f:"What is a Firewall?", b:"Hardware or software that monitors and controls incoming/outgoing network traffic based on security rules, protecting against unauthorised access."},
+      {f:"What is the difference between CC and BCC in email?", b:"CC (Carbon Copy) sends a copy to additional recipients, and ALL recipients can see who was CC'd. BCC (Blind Carbon Copy) sends a copy but hides those recipients from others."},
+      {f:"What does SMTP stand for and what is it used for?", b:"Simple Mail Transfer Protocol — the protocol used to SEND emails. POP3 and IMAP are used to RECEIVE emails."},
+      {f:"What is the difference between POP3 and IMAP?", b:"POP3 downloads emails to your computer and removes them from the server. IMAP keeps emails on the server and syncs across all your devices."},
+      {f:"What is a Hyperlink?", b:"A clickable text or image in a web page that takes you to another page or location when clicked. Also called a 'link'. Hyperlinks are what make the Web navigable."},
+      {f:"What does the padlock icon in the browser address bar indicate?", b:"The website is using HTTPS (secure, encrypted connection). Your data is protected. Always look for the padlock before entering passwords or payment details."},
+      {f:"What keyboard shortcut opens a new browser tab?", b:"Ctrl+T opens a new tab. Ctrl+W closes the current tab. Ctrl+Tab switches to the next tab."},
+      {f:"What is phishing?", b:"A cyber attack where fake websites or emails impersonate trusted organisations to trick users into revealing passwords, credit card numbers, or other personal information."},
+    ],
+    quiz: [
+      {q:"What does WWW stand for?", o:["World Wide Web","World Wire Web","Wide World Web","World Web Wire"], c:0, e:"WWW = World Wide Web. It is a collection of web pages stored on servers and accessed via browsers. It is one service that runs on the Internet."},
+      {q:"What protocol is used to securely transfer web pages (encrypted)?", o:["HTTP","FTP","HTTPS","SMTP"], c:2, e:"HTTPS (HyperText Transfer Protocol Secure) encrypts data between browser and server. Look for HTTPS and a padlock icon when entering sensitive information."},
+      {q:"What does URL stand for?", o:["Universal Resource Link","Uniform Resource Locator","United Reference Label","Universal Reference Location"], c:1, e:"URL = Uniform Resource Locator. It is the unique address of a web page (e.g., https://www.example.com/page.html)."},
+      {q:"What is an ISP?", o:["An internet security program","A type of web browser","A company that provides internet access","An internet search protocol"], c:2, e:"ISP = Internet Service Provider. Companies like BT, Comcast, and Vodafone are ISPs — they connect homes and businesses to the Internet."},
+      {q:"A Cookie is:", o:["A virus that infects your browser","A small file stored on your computer by a website to remember preferences","An encrypted password","A type of digital certificate"], c:1, e:"Cookies are small text files websites store on your computer to remember login states, preferences, and browsing history. They are not inherently malicious but can be used for tracking."},
+      {q:"What is a Firewall?", o:["Antivirus software","Software that speeds up internet connections","Hardware or software that controls network traffic based on security rules","A type of email filter"], c:2, e:"A firewall monitors and controls incoming/outgoing network traffic according to security rules. It protects against unauthorised access to your network or computer."},
+      {q:"Which email protocol is used specifically to SEND emails?", o:["POP3","IMAP","SMTP","FTP"], c:2, e:"SMTP (Simple Mail Transfer Protocol) is used to send emails. POP3 and IMAP are used to receive them."},
+      {q:"What is BCC in an email?", o:["A way to send a copy to additional recipients who are visible to all","A secure encrypted email method","Blind Carbon Copy — sends a copy without other recipients knowing","A method of blocking spam"], c:2, e:"BCC (Blind Carbon Copy) sends a copy of the email to recipients without the main recipient (or CC recipients) being aware of it."},
+      {q:"What does IMAP allow you to do that POP3 does not?", o:["Send emails","Keep emails on the server and sync across multiple devices","Attach large files","Send encrypted emails"], c:1, e:"IMAP keeps emails on the server and syncs them across all your devices (phone, laptop, tablet). POP3 downloads emails to one device and typically removes them from the server."},
+      {q:"What is phishing?", o:["A method of downloading files","Attacks using fake websites/emails to steal personal information","A type of firewall","Sending spam emails"], c:1, e:"Phishing involves fake emails or websites impersonating legitimate organisations (banks, government) to trick users into revealing passwords, credit card numbers, or personal details."},
+      {q:"To bookmark the current page in Firefox, you press:", o:["Ctrl+B","Ctrl+D","Ctrl+F","Ctrl+M"], c:1, e:"Ctrl+D bookmarks (adds to Favourites) the current page in Firefox. Ctrl+B opens/closes the Bookmarks sidebar."},
+      {q:"Which domain extension is used for government websites?", o:[".com",".org",".gov",".edu"], c:2, e:".gov is reserved for government websites. .com = commercial, .org = non-profit organisations, .edu = educational institutions."},
+      {q:"What is VoIP?", o:["A type of web browser","Making calls over the internet instead of phone lines","A type of email protocol","A wireless network standard"], c:1, e:"VoIP (Voice over Internet Protocol) converts voice to digital data and transmits it over the internet. It is much cheaper than traditional phone calls. Examples: Skype, WhatsApp calls."},
+      {q:"What is Pharming?", o:["Sending spam emails","A firewall bypass technique","A malware that redirects a legitimate URL to a fake website","A method of encrypting emails"], c:2, e:"Pharming poisons DNS records so that typing a legitimate URL takes you to a fake (but identical-looking) site. The only way to detect it is by checking the digital certificate."},
+      {q:"What does VPN stand for and what does it do?", o:["Virtual Public Network — speeds up internet","Virtual Private Network — creates an encrypted tunnel over a public network","Verified Protocol Network — authenticates users","Variable Packet Network — manages data packets"], c:1, e:"VPN (Virtual Private Network) creates an encrypted private communication channel over the public internet. Used by companies to let remote workers securely access internal systems."},
+    ]
+  },
+
+  // ── IT SECURITY (BONUS) ───────────────────────────────────
+  {
+    id: 7,
+    title: "IT Security",
+    badge: "Module 5",
+    review: [
+      {
+        title: "S.1 Threats & Malware Types",
+        body: `
+          <p><strong>Data</strong> — raw numbers, words, and facts. <strong>Information</strong> — data that has been processed and organised to be meaningful.</p>
+          <p><strong>Sources of threat:</strong></p>
+          <ul>
+            <li><strong>People</strong> — insiders, service providers, external attackers editing, deleting, or stealing data</li>
+            <li><strong>Unpredictable events</strong> — fires, floods, power cuts, hardware failure</li>
+            <li><strong>Cloud computing risks</strong> — data stored on third-party remote servers (loss of control, privacy)</li>
+          </ul>
+          <p><strong>Malware types:</strong></p>
+          <ul>
+            <li><strong>Virus</strong> — attaches to files; spreads when infected files are shared</li>
+            <li><strong>Worm</strong> — spreads automatically over networks; no host file needed</li>
+            <li><strong>Trojan Horse</strong> — looks legitimate; hides malicious payload</li>
+            <li><strong>Ransomware</strong> — encrypts/locks files; demands ransom to restore</li>
+            <li><strong>Spyware</strong> — silently records and transmits user activity</li>
+            <li><strong>Adware</strong> — displays unwanted advertisements</li>
+            <li><strong>Keylogger</strong> — records every keystroke; captures passwords</li>
+            <li><strong>Rootkit</strong> — hides in OS; grants attacker admin-level access</li>
+            <li><strong>Botnet</strong> — network of infected "zombie" devices controlled remotely by a botmaster</li>
+            <li><strong>Backdoor</strong> — hidden access point that bypasses normal authentication</li>
+          </ul>
+          <p><strong>How malware enters a system:</strong> executing infected files (.exe, .bat), opening email attachments, using infected USB drives, downloading from untrusted sources.</p>
+          <p><strong>Signs of infection:</strong> browser homepage changed, unexpected pop-ups, programs auto-starting, slow performance, emails sent from your account automatically.</p>
+        `
+      },
+      {
+        title: "S.2 Hacking & Social Engineering",
+        body: `
+          <p><strong>Hacking</strong> — gaining access to or control of systems by bypassing security controls.</p>
+          <ul>
+            <li><strong>Black Hat / Cracker</strong> — malicious hacker; accesses systems for personal gain or to cause damage</li>
+            <li><strong>White Hat</strong> — ethical hacker; hired to test and improve security (penetration testing)</li>
+            <li><strong>Grey Hat</strong> — finds vulnerabilities without prior consent but without malicious intent</li>
+          </ul>
+          <p><strong>Social Engineering</strong> — manipulating people (not systems) to reveal sensitive information:</p>
+          <ul>
+            <li><strong>Phishing</strong> — fake emails/websites impersonating trusted institutions</li>
+            <li><strong>Shoulder Surfing</strong> — physically watching someone type credentials</li>
+            <li><strong>Pretexting</strong> — creating a false scenario to extract information (e.g., pretending to be IT support)</li>
+            <li><strong>Information Diving</strong> — searching through rubbish/desks for useful notes or documents</li>
+          </ul>
+          <p><strong>Identity Theft techniques:</strong></p>
+          <ul>
+            <li><strong>Skimming</strong> — cloning credit card data using illicit payment devices</li>
+            <li><strong>Pharming</strong> — redirecting a legitimate URL to a fake site via DNS poisoning</li>
+          </ul>
+        `
+      },
+      {
+        title: "S.3 Passwords & Authentication",
+        body: `
+          <p><strong>Guidelines for strong passwords:</strong></p>
+          <ul>
+            <li>At least 8 characters (14+ is very strong)</li>
+            <li>Mix uppercase, lowercase, numbers, and special characters</li>
+            <li>Do NOT use names, words, or dates</li>
+            <li>Do NOT share passwords or write them down visibly</li>
+            <li>Change passwords regularly</li>
+            <li>Use a different password for each account</li>
+          </ul>
+          <p><strong>Password Manager</strong> — software that stores all passwords in an encrypted database, protected by a single master password. Types: online (cloud), offline (local), browser-integrated. Limitation: if the master password is compromised, all passwords are exposed.</p>
+          <p><strong>OTP (One-Time Password)</strong> — valid for only 30 seconds to 10 minutes. Used for financial transactions. Generated by a hardware token, app (e.g., Google Authenticator), or sent via SMS.</p>
+          <p><strong>Biometric Authentication</strong> — verifying identity using physical characteristics: fingerprint, iris/retina scan, face recognition, hand geometry. Used for device access and high-security areas.</p>
+          <p><strong>Multi-Factor Authentication (MFA)</strong> — combining two or more authentication methods (e.g., password + OTP code) for stronger security.</p>
+        `
+      },
+      {
+        title: "S.4 Network Security & Encryption",
+        body: `
+          <p><strong>Firewall</strong> — hardware or software that filters network traffic based on rules. Blocks unauthorised access. Limitations: rules must be set correctly; cannot stop attacks from inside the LAN.</p>
+          <p><strong>Wireless network security:</strong></p>
+          <ul>
+            <li><strong>Open network</strong> — no password; anyone can connect; very risky</li>
+            <li><strong>WEP (1999)</strong> — first wireless encryption; now considered weak (short key)</li>
+            <li><strong>WPA (2003)</strong> — improved wireless protection</li>
+            <li><strong>WPA2 (2004)</strong> — current standard; considered fully secure</li>
+          </ul>
+          <p><strong>Wireless attack types:</strong></p>
+          <ul>
+            <li><strong>Eavesdropping</strong> — intercepting unencrypted wireless communications</li>
+            <li><strong>Network Hijacking</strong> — tricking your device into connecting to a malicious access point</li>
+            <li><strong>Man-in-the-Middle (MITM)</strong> — secretly intercepting and possibly altering communications between two parties</li>
+          </ul>
+          <p><strong>Encryption / Cryptography</strong> — scrambles data using an algorithm and a key so only authorised parties can read it. Used in HTTPS, VPN, and disk encryption. If you lose the key, you lose access to the data.</p>
+          <p><strong>Backup</strong> — regularly creating copies of data to recover from loss, corruption, or ransomware attack. Companies use Disaster Recovery Plans.</p>
+        `
+      },
+      {
+        title: "S.5 Data Protection & GDPR Principles",
+        body: `
+          <p><strong>Three pillars of information security:</strong></p>
+          <ul>
+            <li><strong>Integrity</strong> — data must be complete, accurate, and unaltered</li>
+            <li><strong>Confidentiality / Privacy</strong> — data accessible only to authorised individuals</li>
+            <li><strong>Availability</strong> — data must be accessible when needed by authorised users</li>
+          </ul>
+          <p><strong>Key GDPR / Data Protection Principles:</strong></p>
+          <ul>
+            <li><strong>Transparency</strong> — users have the right to know how their data is used</li>
+            <li><strong>Legitimacy</strong> — data may only be collected for a specific, stated, legitimate purpose; cannot be further processed beyond that purpose</li>
+            <li><strong>Proportionality</strong> — security measures must be proportional to the actual risk</li>
+          </ul>
+          <p><strong>Data Controller</strong> — the organisation or person who determines the purpose and means of processing personal data.</p>
+          <p><strong>Data Subject</strong> — the individual whose data is being processed. Rights include: right to be informed, right to access, right to correct, right to object.</p>
+          <p><strong>Computer Crime</strong> — illegal activities using electronic devices: unauthorised access, cyberbullying, catfishing, online fraud. Prosecutable by law.</p>
+          <p><strong>Network Administrator</strong> — manages network security, user accounts, access rights, software updates, and monitors network traffic.</p>
+        `
+      }
+    ],
+    flashcards: [
+      {f:"What are the three pillars of information security?", b:"Integrity (data is accurate and unaltered), Confidentiality (data is accessible only to authorised users), Availability (data is accessible when needed)."},
+      {f:"What is a Black Hat hacker?", b:"A malicious hacker who gains unauthorised access to systems for personal gain or to cause damage. Also called a 'Cracker'."},
+      {f:"What is a White Hat hacker?", b:"An ethical hacker who is hired to legally test and improve an organisation's security systems (penetration testing)."},
+      {f:"What is Ransomware?", b:"Malware that encrypts or locks your files and demands a ransom payment to restore access. Prevention: regular backups and updated antivirus."},
+      {f:"What is a Keylogger?", b:"Malware that records every keystroke made on a keyboard and sends them to an attacker, capturing passwords and other sensitive data."},
+      {f:"What is Social Engineering?", b:"Manipulating people (rather than hacking systems) to reveal confidential information. Techniques include phishing, shoulder surfing, and pretexting."},
+      {f:"What is a Botnet?", b:"A network of computers infected with malware and remotely controlled by an attacker (the 'botmaster') without the owners' knowledge — used for spam, DDoS attacks, etc."},
+      {f:"What is Multi-Factor Authentication?", b:"A security method requiring two or more verification factors (e.g., password + OTP code + fingerprint) to gain access, making it much harder to compromise."},
+      {f:"What is an OTP?", b:"One-Time Password — a password valid for only 30 seconds to 10 minutes. Generated by an app, hardware token, or sent via SMS. Used for banking and financial transactions."},
+      {f:"What is WPA2?", b:"Wi-Fi Protected Access 2 (2004) — the current standard for wireless network encryption. Considered fully secure. Replaced the weaker WEP and WPA standards."},
+      {f:"What is a Man-in-the-Middle attack?", b:"An attack where someone secretly intercepts and possibly alters communications between two parties who believe they are communicating directly with each other."},
+      {f:"What is the difference between a Virus and a Worm?", b:"A Virus attaches to files and spreads when infected files are shared. A Worm spreads automatically over networks on its own — it does NOT need a host file."},
+      {f:"What is Encryption?", b:"The process of scrambling data using an algorithm and a key so that only authorised parties with the correct key can read it. Used in HTTPS, VPN, and disk encryption."},
+      {f:"What makes a strong password?", b:"At least 8 characters (14+ very strong), mix of uppercase, lowercase, numbers, and special characters. Don't use names or dates. Never share it. Change regularly."},
+      {f:"What are the GDPR principles of Transparency and Legitimacy?", b:"Transparency: users must be informed about how their data is used. Legitimacy: data can only be collected for a specific stated purpose and cannot be used beyond that purpose."},
+      {f:"What is Shoulder Surfing?", b:"A social engineering technique where an attacker physically watches (or records with a camera) as someone types their credentials or PIN."},
+      {f:"What is Pretexting?", b:"Creating a false scenario (e.g., pretending to be IT support) to manipulate someone into revealing sensitive information."},
+      {f:"What is a Rootkit?", b:"Malware that embeds itself in the operating system, hides its presence, and grants the attacker administrator-level access to the device."},
+    ],
+    quiz: [
+      {q:"What are the three pillars of information security (CIA triad)?", o:["Confidentiality, Integrity, Availability","Control, Identity, Access","Certificates, Infrastructure, Authentication","Confidentiality, Integration, Authorisation"], c:0, e:"The CIA Triad: Confidentiality (data private), Integrity (data accurate/unaltered), Availability (data accessible when needed). These are the three fundamental principles of information security."},
+      {q:"Which type of hacker is hired to legally test and improve security?", o:["Black Hat","Grey Hat","White Hat","Script Kiddie"], c:2, e:"White Hat (ethical) hackers are paid to find vulnerabilities in systems before malicious hackers do. Black Hat hackers act illegally for personal gain."},
+      {q:"What does Ransomware do?", o:["Steals passwords silently","Displays unwanted ads","Encrypts or locks files and demands payment to restore access","Records keystrokes"], c:2, e:"Ransomware encrypts your data or locks your device and demands a ransom (usually cryptocurrency) to restore access. Regular backups are the best protection."},
+      {q:"What is Social Engineering?", o:["Programming robots to make decisions","Manipulating people to reveal confidential information","A type of firewall configuration","Building secure social media platforms"], c:1, e:"Social engineering exploits human psychology rather than technical vulnerabilities. Techniques include phishing, pretexting, and shoulder surfing."},
+      {q:"Which wireless security standard is considered fully secure?", o:["WEP","WPA","WPA2","Open (no encryption)"], c:2, e:"WPA2 (2004) is the current standard and is considered fully secure. WEP (1999) is broken and WPA (2003) has known vulnerabilities."},
+      {q:"What is an OTP used for?", o:["Permanently replacing your regular password","A password valid for 30 seconds–10 minutes, mainly for financial transactions","Opening encrypted files","A type of biometric authentication"], c:1, e:"OTP (One-Time Password) is a temporary code valid for a short window, commonly used in online banking and two-factor authentication."},
+      {q:"What is the difference between a Virus and a Worm?", o:["A virus spreads automatically over networks; a worm needs a host file","A worm spreads automatically; a virus requires a host file to spread","They are the same thing","A virus targets hardware; a worm targets software"], c:1, e:"A Worm spreads automatically over networks without needing a host file. A Virus attaches to files and spreads when infected files are opened or shared."},
+      {q:"What is a Man-in-the-Middle attack?", o:["A hacker guessing your password","An attack where communications between two parties are secretly intercepted","A type of email spam","A virus that damages files"], c:1, e:"MITM attacks secretly intercept (and possibly alter) communications between two parties who each believe they're communicating directly with the other."},
+      {q:"Under GDPR, what does the principle of 'Legitimacy' mean?", o:["Only government organisations can collect data","Data can only be collected for a specific, stated, legitimate purpose","All data must be encrypted","Users must create strong passwords"], c:1, e:"Legitimacy means data may only be collected for a clearly stated and lawful purpose. It cannot be later used for something different from what was originally stated."},
+      {q:"What is Biometric Authentication?", o:["Using a very long password","Verifying identity using physical characteristics like fingerprints or iris scans","A type of OTP","Encrypting data with a biological key"], c:1, e:"Biometric authentication uses unique physical characteristics (fingerprint, face, iris, hand geometry) to verify identity. It is more secure than passwords alone."},
+      {q:"What is a Botnet?", o:["A network of firewalls","A type of antivirus software","A network of infected devices controlled remotely by an attacker","A secure VPN network"], c:2, e:"A Botnet is a collection of compromised 'zombie' computers infected with malware. The botmaster controls them remotely to send spam, launch attacks, or steal data — without the owners knowing."},
+      {q:"What is Pharming?", o:["Sending fake emails to steal data","Malware that redirects a legitimate URL to a fake site via DNS poisoning","A method of encrypting disk data","A type of keylogger"], c:1, e:"Pharming manipulates DNS records so a legitimate website address takes the user to a fake (but identical) site. It is detected by checking the digital certificate (padlock icon in the browser)."},
+    ]
+  }
+];
+
+// ══════════════════════════════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════════════════════════════
+let currentModule = null;
+let currentTab = 'review';
+let fcIndex = 0;
+let fcFlipped = false;
+let quizAnswers = {};
+let quizSubmitted = false;
+let studiedModules = new Set();
+
+// ══════════════════════════════════════════════════════════════
+//  ABOUT
+// ══════════════════════════════════════════════════════════════
+function showAbout() {
+  // sidebar active
+  document.querySelectorAll('.mod-btn').forEach(b => b.classList.toggle('active', b.dataset.idx === 'about'));
+  // top bar
+  document.getElementById('mod-title').textContent = 'What is ICDL?';
+  document.getElementById('mod-badge').textContent = 'Overview';
+  // hide tabs
+  document.getElementById('tabs').style.display = 'none';
+  // hide welcome
+  document.getElementById('welcome').style.display = 'none';
+  // hide module panes
+  ['review-pane','flashcards-pane','quiz-pane'].forEach(id => document.getElementById(id).classList.remove('active'));
+  // show about
+  document.getElementById('about-pane').style.display = 'block';
+}
+
+// ══════════════════════════════════════════════════════════════
+//  NAVIGATION
+// ══════════════════════════════════════════════════════════════
+function loadModule(idx) {
+  currentModule = MODULES[idx];
+  currentTab = 'review';
+  fcIndex = 0;
+  fcFlipped = false;
+  quizAnswers = {};
+  quizSubmitted = false;
+  recallIndex = 0;
+  recallResults = [];
+  recallRevealed = false;
+
+  // update sidebar
+  document.querySelectorAll('.mod-btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.idx)===idx));
+
+  // update top bar
+  document.getElementById('mod-title').textContent = `Module ${idx+1}: ${currentModule.title}`;
+  document.getElementById('mod-badge').textContent = currentModule.badge;
+
+  // show tabs
+  document.getElementById('tabs').style.display = '';
+  document.querySelectorAll('.tab-btn').forEach((b,i) => b.classList.toggle('active', i===0));
+
+  // hide welcome
+  document.getElementById('welcome').style.display = 'none';
+
+  // render content
+  renderReview();
+  renderFlashcards();
+  renderQuiz();
+
+  // show review tab
+  document.getElementById('review-pane').classList.add('active');
+  document.getElementById('flashcards-pane').classList.remove('active');
+  document.getElementById('quiz-pane').classList.remove('active');
+
+  studiedModules.add(idx);
+  updateProgress();
+}
+
+function showTab(tab) {
+  currentTab = tab;
+  const panes = {review:'review-pane', flashcards:'flashcards-pane', recall:'recall-pane', quiz:'quiz-pane'};
+  Object.entries(panes).forEach(([t,id]) => {
+    document.getElementById(id).classList.toggle('active', t===tab);
+  });
+  document.querySelectorAll('.tab-btn').forEach(b => {
+    b.classList.toggle('active', b.textContent.toLowerCase().includes(tab));
+  });
+  if (tab === 'recall') renderRecall();
+}
+
+function updateProgress() {
+  const pct = Math.round(studiedModules.size / 7 * 100);
+  document.getElementById('overall-bar').style.width = pct + '%';
+  document.getElementById('progress-text').textContent = `${studiedModules.size} / 7 modules studied`;
+  document.getElementById('progress-pct').textContent = pct + '%';
+}
+
+// ══════════════════════════════════════════════════════════════
+//  REVIEW
+// ══════════════════════════════════════════════════════════════
+function renderReview() {
+  const pane = document.getElementById('review-pane');
+  pane.innerHTML = currentModule.review.map((s,i) => `
+    <div class="review-section">
+      <div class="review-section-header open" onclick="toggleSection(this)" id="rsh-${i}">
+        <h3>${s.title}</h3>
+        <span class="chevron">▶</span>
+      </div>
+      <div class="review-section-body" id="rsb-${i}">${s.body}</div>
+    </div>
+  `).join('');
+}
+
+function toggleSection(header) {
+  header.classList.toggle('open');
+  const body = header.nextElementSibling;
+  body.classList.toggle('hidden');
+}
+
+// ══════════════════════════════════════════════════════════════
+//  FLASHCARDS
+// ══════════════════════════════════════════════════════════════
+function renderFlashcards() {
+  const pane = document.getElementById('flashcards-pane');
+  const cards = currentModule.flashcards;
+  pane.innerHTML = `
+    <div class="fc-controls">
+      <span class="fc-counter" id="fc-count">Card <span id="fc-cur">1</span> of ${cards.length}</span>
+      <div class="fc-btns">
+        <button class="btn" onclick="shuffleCards()">🔀 Shuffle</button>
+        <button class="btn" onclick="resetCards()">↺ Reset</button>
+      </div>
+    </div>
+    <div class="fc-arena">
+      <div class="fc-card" id="fc-card" onclick="flipCard()">
+        <div class="fc-face front">
+          <div class="fc-label">Question / Term</div>
+          <div class="fc-text" id="fc-front-text">${cards[0].f}</div>
+          <div class="fc-hint">Click to reveal answer</div>
+        </div>
+        <div class="fc-face back">
+          <div class="fc-label">Answer</div>
+          <div class="fc-text" id="fc-back-text">${cards[0].b}</div>
+          <div class="fc-hint">Click to flip back</div>
+        </div>
+      </div>
+    </div>
+    <div class="fc-nav">
+      <button class="btn" onclick="fcPrev()">← Previous</button>
+      <button class="btn primary" onclick="flipCard()">Flip Card</button>
+      <button class="btn" onclick="fcNext()">Next →</button>
+    </div>
+    <div class="fc-progress" id="fc-dots">
+      ${cards.map((_, i) => `<div class="fc-dot ${i===0?'current':''}" id="fcd-${i}"></div>`).join('')}
+    </div>
+  `;
+}
+
+function flipCard() {
+  fcFlipped = !fcFlipped;
+  document.getElementById('fc-card').classList.toggle('flipped', fcFlipped);
+}
+
+function fcNext() {
+  const cards = currentModule.flashcards;
+  markDot(fcIndex, 'seen');
+  fcIndex = (fcIndex + 1) % cards.length;
+  fcFlipped = false;
+  updateFCCard();
+}
+
+function fcPrev() {
+  const cards = currentModule.flashcards;
+  fcIndex = (fcIndex - 1 + cards.length) % cards.length;
+  fcFlipped = false;
+  updateFCCard();
+}
+
+function updateFCCard() {
+  const cards = currentModule.flashcards;
+  document.getElementById('fc-card').classList.remove('flipped');
+  document.getElementById('fc-front-text').textContent = cards[fcIndex].f;
+  document.getElementById('fc-back-text').textContent = cards[fcIndex].b;
+  document.getElementById('fc-cur').textContent = fcIndex + 1;
+  document.querySelectorAll('.fc-dot').forEach((d,i) => {
+    if(i===fcIndex) { d.classList.remove('seen'); d.classList.add('current'); }
+    else d.classList.remove('current');
+  });
+}
+
+function markDot(i, cls) {
+  const d = document.getElementById('fcd-'+i);
+  if(d && !d.classList.contains('current')) d.classList.add(cls);
+}
+
+function shuffleCards() {
+  const cards = currentModule.flashcards;
+  for(let i=cards.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[cards[i],cards[j]]=[cards[j],cards[i]];}
+  fcIndex=0; fcFlipped=false; renderFlashcards();
+}
+
+function resetCards() {
+  fcIndex=0; fcFlipped=false; renderFlashcards();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  QUIZ
+// ══════════════════════════════════════════════════════════════
+function renderQuiz() {
+  const pane = document.getElementById('quiz-pane');
+  const qs = currentModule.quiz;
+  pane.innerHTML = `
+    <div class="quiz-header">
+      <div class="quiz-meta">${qs.length} questions · Click an option to answer</div>
+      <div>
+        <span class="quiz-score-badge" id="quiz-score-badge">0 / ${qs.length} answered</span>
+      </div>
+    </div>
+    ${qs.map((q,qi) => `
+      <div class="question-card" id="qcard-${qi}">
+        <div class="q-num">Question ${qi+1}</div>
+        <div class="q-text">${q.q}</div>
+        <div class="options" id="opts-${qi}">
+          ${q.o.map((opt,oi) => `
+            <div class="option" id="opt-${qi}-${oi}" onclick="selectOption(${qi},${oi})">
+              <div class="option-letter">${String.fromCharCode(65+oi)}</div>
+              <span>${opt}</span>
+            </div>
+          `).join('')}
+        </div>
+        <div class="explanation" id="expl-${qi}">${q.e}</div>
+      </div>
+    `).join('')}
+    <div class="quiz-footer">
+      <button class="btn" onclick="resetQuiz()">↺ Reset Quiz</button>
+    </div>
+    <div id="score-display" style="display:none"></div>
+  `;
+}
+
+function selectOption(qi, oi) {
+  if(quizAnswers[qi] !== undefined) return;   // already answered — ignore
+
+  const qs   = currentModule.quiz;
+  const q    = qs[qi];
+  const card = document.getElementById('qcard-'+qi);
+  const opts = document.querySelectorAll(`#opts-${qi} .option`);
+  const expl = document.getElementById('expl-'+qi);
+
+  // record answer & lock all options
+  quizAnswers[qi] = oi;
+  opts.forEach(o => o.classList.add('locked'));
+
+  // mark chosen option
+  if(oi === q.c) {
+    opts[oi].classList.add('correct');
+    card.classList.add('answered-correct');
+  } else {
+    opts[oi].classList.add('wrong');
+    opts[q.c].classList.add('correct');   // always reveal correct answer
+    card.classList.add('answered-wrong');
+  }
+
+  // show explanation
+  expl.classList.add('show');
+
+  // update live score badge
+  const answered = Object.keys(quizAnswers).length;
+  const correct  = Object.entries(quizAnswers).filter(([i,a]) => a === qs[i].c).length;
+  document.getElementById('quiz-score-badge').textContent =
+    `${correct} correct · ${answered} / ${qs.length} answered`;
+
+  // show final score once all questions answered
+  if(answered === qs.length) showQuizScore();
+}
+
+function showQuizScore() {
+  const qs      = currentModule.quiz;
+  const correct = Object.entries(quizAnswers).filter(([i,a]) => a === qs[i].c).length;
+  const pct     = Math.round(correct / qs.length * 100);
+  const grade   = pct >= 80 ? '🏆 Excellent!' : pct >= 60 ? '👍 Good Pass' : pct >= 40 ? '📚 Keep Studying' : '🔄 Try Again';
+  document.getElementById('quiz-score-badge').textContent = `Score: ${correct}/${qs.length} (${pct}%)`;
+
+  const display = document.getElementById('score-display');
+  display.style.display = 'block';
+  display.innerHTML = `
+    <div class="score-display">
+      <div class="big-score">${pct}%</div>
+      <div class="score-label">${grade}</div>
+      <div class="score-breakdown">
+        <div class="score-item"><div class="val correct">${correct}</div><div class="lbl">Correct</div></div>
+        <div class="score-item"><div class="val wrong">${qs.length-correct}</div><div class="lbl">Wrong</div></div>
+        <div class="score-item"><div class="val">${qs.length}</div><div class="lbl">Total</div></div>
+      </div>
+    </div>
+  `;
+  display.scrollIntoView({behavior:'smooth', block:'end'});
+}
+
+function resetQuiz() {
+  quizAnswers = {};
+  renderQuiz();
+}
+
+// ══════════════════════════════════════════════════════════════
+//  RECALL
+// ══════════════════════════════════════════════════════════════
+
+// Dedicated open-ended recall questions per module (keyed by module id)
+const RECALLS = {
+  // ── Module 0: Computer Essentials ──────────────────────────
+  0: [
+    {q:"What is hardware? Give 3 examples.", a:"Hardware is the physical components of a computer that you can see and touch. Examples: CPU, keyboard, monitor, mouse, printer, hard disk."},
+    {q:"What is software? What are the two main categories?", a:"Software is programs (sets of instructions) that control the computer. Two categories: Operating System software (manages hardware) and Application software (word processor, browser, etc.)."},
+    {q:"What does CPU stand for, and what does it do?", a:"Central Processing Unit — the brain of the computer. It performs calculations, logic operations, and controls all other components. Speed is measured in MHz or GHz."},
+    {q:"What is the difference between RAM and ROM?", a:"RAM (Random Access Memory): volatile, fast, used while running programs — data lost when power off. ROM (Read-Only Memory): non-volatile, permanent, stores startup instructions (BIOS)."},
+    {q:"Name the memory units from smallest to largest.", a:"Bit → Byte (8 bits) → KB (1024 bytes) → MB (1024 KB) → GB (1024 MB) → TB (1024 GB)"},
+    {q:"What is a mainframe computer and who uses it?", a:"A very large, expensive, high-capacity computer used by organisations like banks and airlines to process millions of transactions simultaneously."},
+    {q:"What is the difference between a LAN and a WAN?", a:"LAN (Local Area Network): covers a small area like an office. WAN (Wide Area Network): covers a large geographic area. The Internet is the world's largest WAN."},
+    {q:"What is the difference between the Internet and the WWW?", a:"The Internet is the global network of all connected computers. The WWW (World Wide Web) is a collection of web pages that runs on the Internet — it is just one Internet service."},
+    {q:"Name 4 types of malware and describe each briefly.", a:"Virus (attaches to files, spreads when shared), Worm (spreads automatically over networks), Ransomware (encrypts files for ransom), Trojan (looks legitimate, hides malicious code), Spyware (silently records activity)."},
+    {q:"What does ADSL stand for and what is it?", a:"Asymmetric Digital Subscriber Line — broadband internet delivered over standard phone lines. 'Asymmetric' means download speed is faster than upload."},
+    {q:"What is teleworking? Give one advantage and one disadvantage.", a:"Working from home via computer and internet. Advantage: no commute, flexible hours, reduced office costs. Disadvantage: isolation, less teamwork."},
+    {q:"What is the difference between shareware, freeware, and open source?", a:"Shareware: try before you buy (time/feature limited trial). Freeware: permanently free, but author retains copyright. Open Source: source code freely available, can be modified and redistributed."},
+    {q:"What are the internal components of a CPU?", a:"ALU (Arithmetic & Logic Unit — performs calculations), CU (Control Unit — coordinates processes), Cache Memory (ultra-fast temporary storage), Registers (hold current instructions/values), Bus (data pathway)."},
+    {q:"What is a GUI and why is it important?", a:"Graphical User Interface — uses windows, icons, menus, and a pointer (mouse) to make computers easy to use without needing to type commands. Made computers accessible to non-technical users."},
+  ],
+
+  // ── Module 1: Online Essentials (Using a Computer / Ubuntu) ──
+  1: [
+    {q:"What happens during the computer boot process?", a:"The BIOS (in ROM) runs first, checks hardware, loads the Operating System from the hard disk into RAM, then passes control to the OS."},
+    {q:"How do you properly shut down Ubuntu Linux?", a:"System → Log Out → Shut Down. Never cut the power directly — this can corrupt files and the file system."},
+    {q:"What is the Linux root directory?", a:"In Linux, the entire file system starts from '/' (forward slash). All directories and files branch from this single root point."},
+    {q:"What is your home directory in Ubuntu?", a:"/home/username (e.g., /home/david). This is your personal folder for documents, downloads, and settings."},
+    {q:"What do Ctrl+C, Ctrl+X, and Ctrl+V do?", a:"Ctrl+C = Copy, Ctrl+X = Cut, Ctrl+V = Paste. These shortcuts are universal across almost all applications."},
+    {q:"What do Ctrl+Z and Ctrl+Y do?", a:"Ctrl+Z = Undo (reverses the last action). Ctrl+Y = Redo (re-applies the last undone action)."},
+    {q:"What happens when you press Delete on a file in Gnome?", a:"The file moves to the Trash (like a Recycle Bin). It can be restored until the Trash is emptied. It is NOT permanently deleted immediately."},
+    {q:"How do you force-quit a frozen application?", a:"Open System Monitor (right-click taskbar), find the application, click 'Kill Process'. Or use the xkill command in a terminal."},
+    {q:"How do you take a screenshot of only the active window?", a:"Alt+Print Screen captures just the active window. Print Screen alone captures the entire screen."},
+    {q:"What is the Nautilus file manager?", a:"The default file manager in Ubuntu's Gnome desktop, used to navigate, open, copy, move, rename, and delete files and folders."},
+    {q:"How do you change screen resolution in Ubuntu?", a:"System → Preferences → Screen Resolution. Common options: 800×600, 1024×768, 1280×1024."},
+    {q:"How do you view and manage print jobs?", a:"System → Administration → Printing opens the print manager where you can view active print jobs and pause, restart, or delete them."},
+  ],
+
+  // ── Module 2: Word Processing ──────────────────────────────
+  2: [
+    {q:"What is the default file extension for OpenOffice Writer, and name 3 others it can save as.", a:".odt (OpenDocument Text) is the default. Can also save as: .doc (Word), .rtf (Rich Text Format), .txt (plain text), .html."},
+    {q:"What is the difference between Save and Save As?", a:"Save (Ctrl+S) overwrites the file in its current location and format. Save As lets you choose a new name, location, or file format."},
+    {q:"Name the 4 paragraph alignment types and their keyboard shortcuts.", a:"Left (Ctrl+L), Right (Ctrl+R), Centre (Ctrl+E), Justify (Ctrl+J — aligns to both left and right margins)."},
+    {q:"What keyboard shortcuts apply Bold, Italic, and Underline?", a:"Ctrl+B (Bold), Ctrl+I (Italic), Ctrl+U (Underline). Select the text first, then apply the shortcut."},
+    {q:"How do you add a new row at the bottom of a table in Writer?", a:"Press Tab when the cursor is in the last cell of the table — this automatically adds a new row below."},
+    {q:"What is Mail Merge and what does it need?", a:"Mail Merge combines a template document with a data source (e.g., a spreadsheet of names and addresses) to produce personalised documents for many recipients."},
+    {q:"What is a Header and Footer? What are they used for?", a:"Content that repeats at the top (header) or bottom (footer) of every page. Used for titles, author names, page numbers, and dates."},
+    {q:"What is the difference between portrait and landscape orientation?", a:"Portrait = page is taller than wide (standard for letters). Landscape = page is wider than tall (good for tables, spreadsheets, and wide content)."},
+    {q:"What are Styles in Writer and why use them?", a:"Named collections of formatting settings (e.g., Heading 1 = Arial 16pt Bold). Ensure consistent formatting across a document and allow instant reformatting."},
+    {q:"What is RTF format and when would you use it?", a:"Rich Text Format (.rtf) — preserves basic formatting (fonts, bold, etc.) and can be opened by virtually any word processor regardless of operating system. Good for cross-platform sharing."},
+    {q:"How do you run a spell check in Writer?", a:"Press F7 or Tools → Spelling and Grammar. Misspelled words are underlined in red; grammar issues in green. Right-click a red word for suggested corrections."},
+    {q:"How do you merge cells in a table?", a:"Select the cells to merge, then Table → Merge Cells. The selected cells are combined into one single cell."},
+  ],
+
+  // ── Module 3: Spreadsheets ─────────────────────────────────
+  3: [
+    {q:"What must every formula start with in Calc?", a:"Every formula must begin with = (the equals sign). Without it, Calc treats the entry as plain text, not a formula."},
+    {q:"What is a cell address? Give an example.", a:"A cell address identifies a cell by its column letter and row number. Example: D7 = column D, row 7. C11 = column C, row 11."},
+    {q:"What is the difference between a relative and absolute cell reference?", a:"Relative (A1) adjusts when the formula is copied to another cell. Absolute ($A$1) stays fixed wherever the formula is copied. Press F4 to toggle between the two."},
+    {q:"Write the formulas for SUM, AVERAGE, MIN, MAX, and COUNT.", a:"=SUM(A1:A10), =AVERAGE(A1:A10), =MIN(A1:A10), =MAX(A1:A10), =COUNT(A1:A10). All use a range in brackets."},
+    {q:"What does =IF(A1>50,\"Pass\",\"Fail\") do?", a:"Tests if A1 is greater than 50. If true, it returns 'Pass'; if false, it returns 'Fail'. The IF function takes three arguments: condition, value_if_true, value_if_false."},
+    {q:"What does the #DIV/0! error mean and how do you fix it?", a:"The formula is dividing by zero (or an empty cell). Fix by checking that the divisor cell is not empty or zero. Use IF to guard: =IF(B1=0,0,A1/B1)."},
+    {q:"What chart type is best for trends over time? What about parts of a whole?", a:"Line chart: shows trends over time (e.g., monthly sales). Pie chart: shows proportions/parts of a whole. Bar/Column chart: compares categories."},
+    {q:"What is AutoFill and how do you use it?", a:"Click the small fill handle (square at bottom-right corner of a cell) and drag to automatically extend a series — months (Jan, Feb...), numbers (1, 2, 3...), or copy a formula."},
+    {q:"What is a CSV file? What are its limitations?", a:"Comma-Separated Values — a plain text file with values separated by commas. Compatible with almost every application but saves data only — all formatting, formulas, and multiple sheets are lost."},
+    {q:"How do you freeze rows so column headers stay visible while scrolling?", a:"Click the cell below and to the right of the area to freeze, then View → Freeze Rows and Columns."},
+    {q:"What does Data → AutoFilter do?", a:"Adds dropdown arrows to column headers, letting you show only rows that match specific criteria — without deleting any data."},
+    {q:"How do you sort data in Calc?", a:"Select any cell in the data range, then Data → Sort. Choose which column to sort by and the direction: ascending (A→Z, 1→9) or descending (Z→A, 9→1)."},
+  ],
+
+  // ── Module 5: Presentation ─────────────────────────────────
+  5: [
+    {q:"What is the default file extension for OpenOffice Impress? Name two others.", a:".odp (OpenDocument Presentation). Also: .ppt (PowerPoint editable) and .pps (PowerPoint Show — opens directly in slideshow mode)."},
+    {q:"What is the Slide Master and why is it useful?", a:"A template slide that controls the appearance of ALL slides (background, fonts, colours, logo). Changing the master instantly updates every slide, ensuring consistency."},
+    {q:"What is the difference between a Transition and an Animation?", a:"Transition: the visual effect when moving from one slide to the next (e.g., Fade, Wipe). Animation: an effect applied to an individual object on a slide (text flying in, image fading)."},
+    {q:"Which view should you use to rearrange slides, and why?", a:"Slide Sorter view — shows all slides as thumbnails making it easy to see the full presentation and drag slides into a new order."},
+    {q:"What are the 5 main views in Impress and what is each used for?", a:"Normal (main editing), Outline (text only), Slide Sorter (rearrange), Notes (add speaker notes), Slide Show (run the presentation with F5)."},
+    {q:"What print option would you choose to give the audience printed pages with 6 slides per page?", a:"Handouts — prints multiple slides per page (2, 3, 4, 6, or 9). Chosen under File → Print → Document Type."},
+    {q:"What are the three types of animation effects?", a:"Entrance (object appears), Emphasis (object changes while on screen — spin, grow, colour change), Exit (object disappears). Set in Slide Show → Animation."},
+    {q:"What is the difference between Notes view and Outline view?", a:"Notes view shows each slide with a speaker notes area below — private reminders for the presenter. Outline view shows just the text content of all slides for editing the structure."},
+    {q:"How do you apply a transition to ALL slides in one step?", a:"Slide Show → Slide Transition, choose your transition, then click 'Apply to All Slides'. Without this, the transition only applies to the currently selected slide."},
+    {q:"State 3 best practices for effective slide design.", a:"Keep text brief (bullets, not paragraphs), high contrast between text and background, max 6 bullet points per slide, consistent fonts and colours, avoid clutter — one idea per slide."},
+    {q:"How do you start a slideshow from the first slide? From the current slide?", a:"F5 starts from the first slide. Shift+F5 starts from the currently selected slide. Press Escape at any time to end the show."},
+    {q:"How do you insert an image onto a slide?", a:"Insert → Picture → From File. Navigate to the image, click Open. Then resize by dragging the corner handles and move by dragging."},
+  ],
+
+  // ── Module 6: Online Collaboration ─────────────────────────
+  6: [
+    {q:"What is the difference between the Internet and the WWW?", a:"The Internet is the global network infrastructure connecting all computers worldwide. The WWW is a collection of web pages — just one service that runs on the Internet."},
+    {q:"Explain the structure of this URL: https://www.bbc.co.uk/news/index.html", a:"https:// = protocol (secure), www. = subdomain, bbc.co.uk = domain name (.co.uk = UK company), /news/index.html = path to the specific page."},
+    {q:"What do HTTP and HTTPS stand for? What is the difference?", a:"HTTP: HyperText Transfer Protocol (transmits web pages). HTTPS: the secure encrypted version. HTTPS protects data in transit — essential for banking, shopping, and logins. Look for the padlock icon."},
+    {q:"What is a Cookie? What is it used for?", a:"A small text file stored on your computer by a website to remember your login state, preferences, or browsing history. Can also be used for tracking advertising."},
+    {q:"What is the difference between CC and BCC in email?", a:"CC (Carbon Copy): all recipients can see who was copied. BCC (Blind Carbon Copy): the copy is hidden — the main recipient does not know who else received it."},
+    {q:"What are SMTP, POP3, and IMAP? What does each do?", a:"SMTP: sends emails. POP3: downloads emails to your device (usually removes from server). IMAP: keeps emails on the server and syncs across all devices."},
+    {q:"What is phishing? How can you recognise it?", a:"Fake emails/websites impersonating trusted organisations to steal passwords or personal data. Signs: unexpected urgency, poor grammar, link domain different from the institution, no institution asks for credentials by email."},
+    {q:"What is a Digital Certificate? What does the padlock icon mean?", a:"An electronic document verifying a website's identity for encrypted HTTPS connections. The padlock icon in the browser address bar means HTTPS is active and the connection is encrypted."},
+    {q:"What is VoIP? Give an example.", a:"Voice over Internet Protocol — makes audio/video calls over the internet instead of phone lines. Much cheaper than traditional calls. Examples: Skype, WhatsApp calls, Zoom."},
+    {q:"What is a VPN and who uses it?", a:"Virtual Private Network — creates an encrypted tunnel over the public internet. Used by companies so remote employees can securely access internal systems, and by individuals for privacy."},
+    {q:"What is Pharming?", a:"A malware attack that poisons DNS records to redirect a legitimate URL to a fake (but identical-looking) website. The only way to detect it is by checking the digital certificate."},
+    {q:"Name 4 rules of Netiquette.", a:"Keep messages short and on-topic, use a clear subject line, don't share others' personal info, no offensive content, check for errors before sending, verify attachments before sharing."},
+    {q:"What is DNS and what does it do?", a:"Domain Name System — translates human-readable URLs (e.g., www.google.com) into IP addresses (e.g., 142.250.70.14) so computers can find each other. It is like a phone book for the internet."},
+    {q:"What is ISP? What should you consider before choosing one?", a:"Internet Service Provider — company that provides internet access. Consider: cost, download/upload speed, data limits, type of connection (ADSL, fibre, 4G)."},
+  ],
+
+  // ── Module 7: IT Security ───────────────────────────────────
+  7: [
+    {q:"What are the three pillars of information security (CIA Triad)?", a:"Confidentiality (data is accessible only to authorised users), Integrity (data is accurate, complete, and unaltered), Availability (data is accessible when needed by authorised users)."},
+    {q:"What is the difference between a Virus, a Worm, and a Trojan?", a:"Virus: attaches to files, spreads when files are shared. Worm: spreads automatically over networks without needing a host file. Trojan: appears legitimate but contains hidden malicious code — does not self-replicate."},
+    {q:"What does Ransomware do, and what is the best protection?", a:"Ransomware encrypts or locks your files and demands a ransom to restore access. Best protection: regular backups stored offline, and up-to-date antivirus software."},
+    {q:"What is Social Engineering? Name 3 techniques.", a:"Manipulating people (not systems) to reveal confidential information. Techniques: Phishing (fake emails/sites), Shoulder Surfing (watching you type), Pretexting (fake scenario), Information Diving (searching rubbish for data)."},
+    {q:"What is the difference between Black Hat, White Hat, and Grey Hat hackers?", a:"Black Hat: malicious hacker for personal gain. White Hat: ethical hacker hired to legally test and improve security. Grey Hat: finds vulnerabilities without permission but without malicious intent."},
+    {q:"What makes a strong password? Give 5 rules.", a:"At least 8 characters (14+ very strong), mix uppercase + lowercase + numbers + special characters, no names or dates, unique per account, changed regularly, never shared or written visibly."},
+    {q:"What is Multi-Factor Authentication (MFA)?", a:"A security method requiring two or more verification factors: something you know (password), something you have (OTP token), something you are (biometric). Much harder to compromise than a password alone."},
+    {q:"What is an OTP and what is it used for?", a:"One-Time Password — valid for 30 seconds to 10 minutes. Used for banking and financial transactions. Generated by an authenticator app, hardware token, or sent via SMS."},
+    {q:"What are WEP, WPA, and WPA2? Which is currently secure?", a:"All are wireless network encryption standards. WEP (1999): broken, too weak. WPA (2003): improved but has known vulnerabilities. WPA2 (2004): current standard, considered fully secure."},
+    {q:"What is a Man-in-the-Middle (MITM) attack?", a:"An attacker secretly intercepts and possibly alters communications between two parties who each believe they are communicating directly with the other — like reading someone's post before resealing it."},
+    {q:"What is Encryption? Why is it important?", a:"Scrambling data using an algorithm and a key so only authorised parties with the correct key can read it. Used in HTTPS, VPN, and disk encryption to protect data in transit and at rest."},
+    {q:"What are the GDPR principles of Transparency, Legitimacy, and Proportionality?", a:"Transparency: users must be told how their data is used. Legitimacy: data collected only for a specific lawful purpose. Proportionality: security measures must be proportional to the actual risk."},
+    {q:"What is a Rootkit? Why is it particularly dangerous?", a:"Malware that embeds itself in the OS, hides its presence from antivirus, and gives the attacker administrator-level control of the device — making it very hard to detect and remove."},
+    {q:"What is Pharming and how is it different from Phishing?", a:"Pharming: malware poisons DNS records so a legitimate URL redirects to a fake site — no suspicious email needed. Phishing: a fake email tricks you into clicking a link. Pharming is harder to detect."},
+  ],
+};
+
+let recallIndex   = 0;
+let recallResults = [];   // 'correct' | 'wrong' per question
+let recallQuestions = [];
+
+function renderRecall() {
+  recallIndex   = 0;
+  recallResults = [];
+  // Use quiz questions (they have 4 options), shuffled
+  recallQuestions = [...currentModule.quiz].sort(() => Math.random() - 0.5);
+  buildRecallUI();
+}
+
+function buildRecallUI() {
+  const pane  = document.getElementById('recall-pane');
+  const total = recallQuestions.length;
+
+  pane.innerHTML = `
+    <div class="recall-header">
+      <span class="recall-meta">🧠 Recall — one question at a time</span>
+      <div style="display:flex;gap:8px;align-items:center">
+        <span class="quiz-score-badge" id="rc-score-badge">0 / ${total}</span>
+        <button class="btn" onclick="renderRecall()">↺ Restart</button>
+      </div>
+    </div>
+    <div class="recall-progress-wrap">
+      <div class="recall-progress-fill" id="rc-bar" style="width:0%"></div>
+    </div>
+    <div id="rc-card" class="recall-card"></div>
+    <div class="recall-streak" id="rc-streak"></div>
+    <div class="recall-summary" id="rc-summary"></div>
+  `;
+
+  showRecallQuestion();
+}
+
+function showRecallQuestion() {
+  const total = recallQuestions.length;
+
+  if (recallIndex >= total) { showRecallSummary(); return; }
+
+  const q   = recallQuestions[recallIndex];
+  const pct = Math.round(recallIndex / total * 100);
+
+  document.getElementById('rc-bar').style.width = pct + '%';
+  updateRecallStreak();
+
+  // shuffle option indices so correct answer isn't always in same position
+  const shuffled = [0,1,2,3].sort(() => Math.random() - 0.5);
+
+  document.getElementById('rc-card').className = 'recall-card';
+  document.getElementById('rc-card').innerHTML = `
+    <div>
+      <div class="recall-q-label">Question ${recallIndex + 1} of ${total}</div>
+      <div class="recall-question">${q.q}</div>
+    </div>
+    <div class="options" id="rc-opts" style="margin-top:18px">
+      ${shuffled.map(oi => `
+        <div class="option" id="rc-opt-${oi}" onclick="answerRecall(${oi}, ${q.c})">
+          <div class="option-letter">${String.fromCharCode(65 + shuffled.indexOf(oi))}</div>
+          <span>${q.o[oi]}</span>
+        </div>
+      `).join('')}
+    </div>
+    <div class="explanation" id="rc-expl">${q.e}</div>
+  `;
+}
+
+function answerRecall(chosen, correct) {
+  // lock all options
+  const opts = document.querySelectorAll('#rc-opts .option');
+  opts.forEach(o => o.classList.add('locked'));
+
+  // mark chosen & correct
+  document.getElementById(`rc-opt-${chosen}`).classList.add(chosen === correct ? 'correct' : 'wrong');
+  if (chosen !== correct) {
+    document.getElementById(`rc-opt-${correct}`).classList.add('correct');
+  }
+
+  // show explanation
+  document.getElementById('rc-expl').classList.add('show');
+
+  // flash card border
+  const card = document.getElementById('rc-card');
+  card.classList.add(chosen === correct ? 'revealed-correct' : 'revealed-wrong');
+
+  // record result
+  recallResults.push(chosen === correct ? 'correct' : 'wrong');
+
+  // update score badge
+  const got = recallResults.filter(r => r === 'correct').length;
+  document.getElementById('rc-score-badge').textContent =
+    `${got} correct · ${recallResults.length} / ${recallQuestions.length}`;
+
+  // show Next button inside card
+  const nextLabel = recallIndex + 1 < recallQuestions.length ? 'Next Question →' : 'See Results →';
+  const nextBtn = document.createElement('button');
+  nextBtn.className = 'btn primary';
+  nextBtn.style.cssText = 'margin-top:16px;width:100%';
+  nextBtn.textContent = nextLabel;
+  nextBtn.onclick = () => { recallIndex++; showRecallQuestion(); };
+  document.getElementById('rc-card').appendChild(nextBtn);
+}
+
+function updateRecallStreak() {
+  const streak = document.getElementById('rc-streak');
+  if (!recallResults.length) { streak.innerHTML = ''; return; }
+  const dots = recallResults.map(r =>
+    `<div class="streak-dot ${r === 'correct' ? 'got' : 'miss'}"></div>`
+  ).join('');
+  const got  = recallResults.filter(r => r === 'correct').length;
+  const miss = recallResults.filter(r => r === 'wrong').length;
+  streak.innerHTML = `
+    <span style="color:var(--text-dim);font-size:0.75rem;margin-right:4px">Progress:</span>
+    ${dots}
+    <span style="margin-left:8px;color:var(--success);font-weight:700">${got} ✓</span>
+    <span style="margin-left:4px;color:var(--danger);font-weight:700">${miss} ✗</span>
+  `;
+}
+
+function showRecallSummary() {
+  const total  = recallQuestions.length;
+  const got    = recallResults.filter(r => r === 'correct').length;
+  const missed = total - got;
+  const pct    = Math.round(got / total * 100);
+  const grade  = pct === 100 ? '🏆 Perfect!' : pct >= 80 ? '🌟 Excellent!' : pct >= 60 ? '👍 Good Pass' : '📚 Keep Practising';
+
+  document.getElementById('rc-bar').style.width = '100%';
+  document.getElementById('rc-card').style.display = 'none';
+  document.getElementById('rc-score-badge').textContent = `Score: ${got}/${total} (${pct}%)`;
+
+  const missedItems = recallQuestions
+    .filter((_,i) => recallResults[i] === 'wrong')
+    .map(q => `
+      <div class="missed-item">
+        <strong>Q: ${q.q}</strong>
+        A: ${q.o[q.c]}
+      </div>
+    `).join('');
+
+  const summary = document.getElementById('rc-summary');
+  summary.classList.add('show');
+  summary.innerHTML = `
+    <div class="big-score">${pct}%</div>
+    <div class="score-label">${grade}</div>
+    <div class="score-breakdown">
+      <div class="score-item"><div class="val correct">${got}</div><div class="lbl">Correct</div></div>
+      <div class="score-item"><div class="val wrong">${missed}</div><div class="lbl">Wrong</div></div>
+      <div class="score-item"><div class="val">${total}</div><div class="lbl">Total</div></div>
+    </div>
+    ${missed > 0
+      ? `<div class="missed-list"><h4>❌ Review these (${missed})</h4>${missedItems}</div>`
+      : '<p style="color:var(--success);margin-top:16px;font-weight:700">🎉 Perfect score — every answer correct!</p>'}
+    <div style="margin-top:20px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap">
+      <button class="btn primary" onclick="renderRecall()">↺ Try Again</button>
+      <button class="btn" onclick="showTab('quiz')">Go to Practice Test →</button>
+    </div>
+  `;
+}
+</script>
+</body>
+</html>
