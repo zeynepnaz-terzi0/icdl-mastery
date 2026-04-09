@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -c \"from pypdf import PdfReader; r = PdfReader\\('C:/Users/Windows 10/Downloads/Module1_eng.pdf'\\); print\\(f'Pages: {len\\(r.pages\\)}'\\); print\\(r.pages[0].extract_text\\(\\)[:2000]\\)\")",
+      "Bash(pip install:*)",
+      "Bash(python3 -c ':*)",
+      "Bash(del \"C:\\\\Users\\\\Windows 10\\\\Desktop\\\\handout_content.txt\")",
+      "WebFetch(domain:www.unibocconi.it)",
+      "Bash(git --version)",
+      "Bash(gh --version)",
+      "Bash(git -C \"C:/Users/Windows 10/Desktop/r ta\" status)",
+      "mcp__Claude_Preview__preview_start",
+      "Bash(gh auth:*)",
+      "Bash(cmd.exe /c \"where gh\")",
+      "Bash(cmd.exe /c \"gh auth status\")",
+      "Bash(cmd.exe /c \"dir \\\\\"C:\\\\Program Files\\\\GitHub CLI\\\\\" 2>&1\")",
+      "Bash(cmd.exe /c \"dir \\\\\"C:\\\\Users\\\\Windows 10\\\\AppData\\\\Local\\\\Programs\\\\\" 2>&1 | findstr -i git\")",
+      "Bash(cmd.exe /c \"dir \\\\\"C:\\\\Users\\\\Windows 10\\\\AppData\\\\Local\\\\Programs\\\\\" 2>&1\")",
+      "Bash(cmd.exe /c \"git config --global user.name && git config --global user.email\")"
+    ]
+  }
+}

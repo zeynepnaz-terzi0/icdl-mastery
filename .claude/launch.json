@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "icdl-mastery",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "3000", "--directory", "C:/Users/Windows 10/Desktop/r ta"],
+      "port": 3000
+    }
+  ]
+}
