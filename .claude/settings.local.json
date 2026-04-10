@@ -16,7 +16,8 @@
       "Bash(cmd.exe /c \"dir \\\\\"C:\\\\Program Files\\\\GitHub CLI\\\\\" 2>&1\")",
       "Bash(cmd.exe /c \"dir \\\\\"C:\\\\Users\\\\Windows 10\\\\AppData\\\\Local\\\\Programs\\\\\" 2>&1 | findstr -i git\")",
       "Bash(cmd.exe /c \"dir \\\\\"C:\\\\Users\\\\Windows 10\\\\AppData\\\\Local\\\\Programs\\\\\" 2>&1\")",
-      "Bash(cmd.exe /c \"git config --global user.name && git config --global user.email\")"
+      "Bash(cmd.exe /c \"git config --global user.name && git config --global user.email\")",
+      "Bash(python3)"
     ]
   }
 }
