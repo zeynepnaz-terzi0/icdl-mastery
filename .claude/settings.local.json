@@ -17,7 +17,9 @@
       "Bash(cmd.exe /c \"dir \\\\\"C:\\\\Users\\\\Windows 10\\\\AppData\\\\Local\\\\Programs\\\\\" 2>&1 | findstr -i git\")",
       "Bash(cmd.exe /c \"dir \\\\\"C:\\\\Users\\\\Windows 10\\\\AppData\\\\Local\\\\Programs\\\\\" 2>&1\")",
       "Bash(cmd.exe /c \"git config --global user.name && git config --global user.email\")",
-      "Bash(python3)"
+      "Bash(python3)",
+      "Bash(python3 \"C:/Users/Windows 10/Desktop/r ta/add_lectures.py\")",
+      "Bash(del \"C:/Users/Windows 10/Desktop/r ta/icdl_study_app_backup_748d2a1.html\")"
     ]
   }
 }
