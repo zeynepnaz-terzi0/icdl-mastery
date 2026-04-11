@@ -636,6 +636,7 @@
   <div id="sidebar-header">
     <div class="logo">ICDL Mastery</div>
     <div class="sub">International Computer Driving Licence</div>
+    <button onclick="goHome()" style="margin-top:10px;width:100%;padding:7px 0;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:0.8rem;font-weight:600;letter-spacing:0.03em;opacity:0.85;transition:opacity 0.2s" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=0.85">🏠 Home</button>
   </div>
   <div id="module-list">
     <div class="sidebar-section-label">Info</div>
@@ -3293,6 +3294,17 @@ let studiedModules = new Set();
 // ══════════════════════════════════════════════════════════════
 //  ABOUT
 // ══════════════════════════════════════════════════════════════
+function goHome() {
+  document.getElementById('welcome').style.display = '';
+  document.getElementById('about-pane').style.display = 'none';
+  document.getElementById('tabs').style.display = 'none';
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.mod-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('mod-title').textContent = 'Welcome';
+  document.getElementById('mod-badge').textContent = 'ICDL v4';
+  currentModule = null;
+}
+
 function showAbout() {
   // sidebar active
   document.querySelectorAll('.mod-btn').forEach(b => b.classList.toggle('active', b.dataset.idx === 'about'));
