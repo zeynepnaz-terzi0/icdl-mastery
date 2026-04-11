@@ -689,8 +689,8 @@
     <span class="badge" id="mod-badge">ICDL v4</span>
   </div>
   <div id="tabs" style="display:none">
-    <button class="tab-btn active" onclick="showTab('review')">📖 Review</button>
-    <button class="tab-btn" onclick="showTab('lecture')">📚 Lecture</button>
+    <button class="tab-btn active" onclick="showTab('lecture')">📚 Lecture</button>
+    <button class="tab-btn" onclick="showTab('review')">📖 Review</button>
     <button class="tab-btn" onclick="showTab('flashcards')">🃏 Flashcards</button>
     <button class="tab-btn" onclick="showTab('quiz')">✅ Practice Test</button>
     <button class="tab-btn" onclick="showTab('recall')">🧠 Recall</button>
@@ -3283,7 +3283,7 @@ const MODULES = [
 //  STATE
 // ══════════════════════════════════════════════════════════════
 let currentModule = null;
-let currentTab = 'review';
+let currentTab = 'lecture';
 let fcIndex = 0;
 let fcFlipped = false;
 let quizAnswers = {};
@@ -3343,7 +3343,8 @@ function loadModule(idx) {
   renderQuiz();
 
   // show review tab
-  document.getElementById('review-pane').classList.add('active');
+  document.getElementById('lecture-pane').classList.add('active');
+  document.getElementById('review-pane').classList.remove('active');
   document.getElementById('flashcards-pane').classList.remove('active');
   document.getElementById('quiz-pane').classList.remove('active');
 
